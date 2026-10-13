@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Menu - FoodieHub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Horizontal navbar -->
+<nav class="navbar navbar-expand-lg bg-danger" data-bs-theme="dark">
+  <div class="container">
+    <a class="navbar-brand" href="/home.html">FoodieHub</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/home.html">Home</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Menu</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/menu.html">All Items</a></li>
+            <li><a class="dropdown-item" href="/menu.html?category=Starters">Starters</a></li>
+            <li><a class="dropdown-item" href="/menu.html?category=Main Course">Main Course</a></li>
+            <li><a class="dropdown-item" href="/menu.html?category=Desserts">Desserts</a></li>
+            <li><a class="dropdown-item" href="/menu.html?category=Beverages">Beverages</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="/orders.html">My Orders</a></li>
+        <li class="nav-item"><a class="nav-link" href="/offers.html">Offers</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact.html">Contact Us</a></li>
+      </ul>
+      <a class="btn btn-light btn-sm" href="/">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-4">
+  <h2 id="heading" class="mb-3">Menu</h2>
+  <div class="row g-3" id="menu"></div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+// makes text safe to put inside HTML
+const esc = s => String(s).replace(/[&<>"']/g, c => "&#" + c.charCodeAt(0) + ";");
+
+// show one category if the link has ?category=...
+const category = new URLSearchParams(location.search).get("category");
+if (category) document.getElementById("heading").textContent = category;
+
+fetch("/api/foods")
+  .then(res => res.json())
+  .then(foods => {
+    let html = "";
+    foods.forEach(f => {
+      if (category && f.category !== category) return;
+
+      // badges: Veg / Non-Veg, Popular, Not Available
+      let badges = f.type === "Veg"
+        ? '<span class="badge bg-success">Veg</span> '
+        : '<span class="badge bg-danger">Non-Veg</span> ';
+      if (f.popular === "Yes") badges += '<span class="badge bg-warning text-dark">Popular</span> ';
+      if (f.availability !== "Available") badges += '<span class="badge bg-secondary">Not Available</span>';
+
+      html += `
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="mb-2">${badges}</div>
+              <h5>${esc(f.name)}</h5>
+              <p class="text-secondary">${esc(f.category)} - Rs. ${esc(f.price)}</p>
+              <form action="/order" method="post">
+                <input type="hidden" name="food" value="${esc(f.name)}">
+                <input type="hidden" name="price" value="${esc(f.price)}">
+                <input class="form-control mb-2" name="customer" placeholder="Your name" required>
+                <input class="form-control mb-2" name="quantity" type="number" min="1" value="1" required>
+                <button class="btn btn-danger w-100" ${f.availability === "Available" ? "" : "disabled"}>Order</button>
+              </form>
+            </div>
+          </div>
+        </div>`;
+    });
+    document.getElementById("menu").innerHTML = html || "<p>No food items yet. Add some on the Home page.</p>";
+  });
+</script>
+
+</body>
+</html>

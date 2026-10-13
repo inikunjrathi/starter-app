@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>All Bookings - The Grand Stay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Horizontal navbar -->
+<nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+  <div class="container">
+    <a class="navbar-brand" href="/home.html">The Grand Stay</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/home.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/rooms.html">Rooms</a></li>
+        <li class="nav-item"><a class="nav-link" href="/booking.html">Book a Room</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/bookings.html">Bookings</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact.html">Contact Us</a></li>
+      </ul>
+      <a class="btn btn-light btn-sm" href="/">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-4">
+  <h2 id="heading" class="mb-3">All Bookings</h2>
+  <table class="table table-striped table-bordered">
+    <thead class="table-dark"><tr><th>Guest Name</th><th>Email</th><th>Phone</th><th>Room Type</th><th>Check-in</th><th>Check-out</th><th>Guests</th></tr></thead>
+    <tbody id="list"></tbody>
+  </table>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+// get all records from MongoDB and add one table row per record
+fetch("/api/bookings")
+  .then(res => res.json())
+  .then(items => {
+    const list = document.getElementById("list");
+    items.forEach(item => {
+      const row = list.insertRow();
+      row.insertCell().textContent = item.guestName;
+      row.insertCell().textContent = item.email;
+      row.insertCell().textContent = item.phone;
+      row.insertCell().textContent = item.roomType;
+      row.insertCell().textContent = item.checkIn;
+      row.insertCell().textContent = item.checkOut;
+      row.insertCell().textContent = item.guests;
+    });
+  });
+</script>
+
+</body>
+</html>

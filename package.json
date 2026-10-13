@@ -1,15 +1,14 @@
 {
   "name": "starter-app",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "template/index.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node template/index.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
-    "bootstrap-icons": "^1.11.3",
     "express": "^4.21.2",
-    "mongodb": "^6.12.0"
+    "mongoose": "^9.11.2"
   }
 }

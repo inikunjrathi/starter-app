@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pizza Details</title>
+</head>
+<body>
+
+<h2>Pizza Details Management</h2>
+
+<form action="/add" method="post">
+
+  <input name="name" placeholder="Pizza Name" required><br><br>
+
+  <input name="category" placeholder="Category" required><br><br>
+
+  <select name="size" required>
+    <option value="">Select Size</option>
+    <option>Small</option>
+    <option>Medium</option>
+    <option>Large</option>
+  </select><br><br>
+
+  <input name="cost" type="number" placeholder="Cost" required><br><br>
+
+  <button type="submit">Add Pizza</button>
+
+</form>
+
+</body>
+</html>

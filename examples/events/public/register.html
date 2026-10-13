@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register - TechFest 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Horizontal navbar -->
+<nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+  <div class="container">
+    <a class="navbar-brand" href="/home.html">TechFest 2026</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/home.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/events.html">Events</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/register.html">Register</a></li>
+        <li class="nav-item"><a class="nav-link" href="/participants.html">Participants</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact.html">Contact Us</a></li>
+      </ul>
+      <a class="btn btn-light btn-sm" href="/">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-4">
+  <div class="card" style="max-width:600px">
+    <div class="card-body">
+      <h4 class="mb-3">Event Registration</h4>
+      <form action="/add" method="post">
+
+        <label class="form-label">Full Name</label>
+        <input class="form-control mb-3" name="name" type="text" required>
+
+        <label class="form-label">Email</label>
+        <input class="form-control mb-3" name="email" type="email" required>
+
+        <label class="form-label">Phone</label>
+        <input class="form-control mb-3" name="phone" type="tel" pattern="[0-9]{10}" placeholder="10 digits" required>
+
+        <label class="form-label">College</label>
+        <input class="form-control mb-3" name="college" type="text" required>
+
+        <label class="form-label">Year</label>
+        <select class="form-select mb-3" name="year" required>
+          <option value="">Select Year</option>
+          <option>FE</option>
+          <option>SE</option>
+          <option>TE</option>
+          <option>BE</option>
+        </select>
+
+        <label class="form-label">Event</label>
+        <select class="form-select mb-3" name="event" required>
+          <option value="">Select Event</option>
+          <option>Hackathon</option>
+          <option>Robo Race</option>
+          <option>Web Design Contest</option>
+          <option>Quiz Bowl</option>
+          <option>Paper Presentation</option>
+          <option>Gaming Arena</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Register</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

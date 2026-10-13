@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calculator - My Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Horizontal navbar -->
+<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+  <div class="container">
+    <a class="navbar-brand" href="/home.html">My Website</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/home.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/gallery.html">Gallery</a></li>
+        <li class="nav-item"><a class="nav-link" href="/shop.html">Shop</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/calculator.html">Calculator</a></li>
+        <li class="nav-item"><a class="nav-link" href="/sidebar.html">Sidebar</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact.html">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="/messages.html">Messages</a></li>
+      </ul>
+      <a class="btn btn-light btn-sm" href="/">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-4">
+  <h2 class="mb-3">Calculator</h2>
+  <div class="card" style="max-width:300px">
+    <div class="card-body">
+      <input class="form-control form-control-lg text-end mb-3" id="display" readonly>
+      <div class="d-grid gap-2" style="grid-template-columns: repeat(4, 1fr)">
+        <button class="btn btn-light border" onclick="press('7')">7</button>
+        <button class="btn btn-light border" onclick="press('8')">8</button>
+        <button class="btn btn-light border" onclick="press('9')">9</button>
+        <button class="btn btn-secondary" onclick="press('/')">/</button>
+        <button class="btn btn-light border" onclick="press('4')">4</button>
+        <button class="btn btn-light border" onclick="press('5')">5</button>
+        <button class="btn btn-light border" onclick="press('6')">6</button>
+        <button class="btn btn-secondary" onclick="press('*')">*</button>
+        <button class="btn btn-light border" onclick="press('1')">1</button>
+        <button class="btn btn-light border" onclick="press('2')">2</button>
+        <button class="btn btn-light border" onclick="press('3')">3</button>
+        <button class="btn btn-secondary" onclick="press('-')">-</button>
+        <button class="btn btn-light border" onclick="press('0')">0</button>
+        <button class="btn btn-light border" onclick="press('.')">.</button>
+        <button class="btn btn-danger" onclick="clearDisplay()">C</button>
+        <button class="btn btn-secondary" onclick="press('+')">+</button>
+      </div>
+      <button class="btn btn-success w-100 mt-2" onclick="calculate()">=</button>
+    </div>
+  </div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+const display = document.getElementById("display");
+
+function press(value) {
+  display.value += value;
+}
+
+function clearDisplay() {
+  display.value = "";
+}
+
+function calculate() {
+  try {
+    // the display only ever contains digits and + - * / . so this is safe
+    display.value = eval(display.value);
+  } catch {
+    display.value = "Error";
+  }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Offers - FoodieHub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Horizontal navbar -->
+<nav class="navbar navbar-expand-lg bg-danger" data-bs-theme="dark">
+  <div class="container">
+    <a class="navbar-brand" href="/home.html">FoodieHub</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/home.html">Home</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Menu</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/menu.html">All Items</a></li>
+            <li><a class="dropdown-item" href="/menu.html?category=Starters">Starters</a></li>
+            <li><a class="dropdown-item" href="/menu.html?category=Main Course">Main Course</a></li>
+            <li><a class="dropdown-item" href="/menu.html?category=Desserts">Desserts</a></li>
+            <li><a class="dropdown-item" href="/menu.html?category=Beverages">Beverages</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="/orders.html">My Orders</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/offers.html">Offers</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact.html">Contact Us</a></li>
+      </ul>
+      <a class="btn btn-light btn-sm" href="/">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-4">
+  <h2 class="mb-3">Offers</h2>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card h-100 border-success">
+        <div class="card-body">
+          <span class="badge bg-success fs-6">20% OFF</span>
+          <p class="mt-2">On orders above Rs. 500</p>
+          <span class="badge bg-dark">Code: FEAST20</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 border-warning">
+        <div class="card-body">
+          <span class="badge bg-warning text-dark fs-6">Buy 1 Get 1</span>
+          <p class="mt-2">On all Desserts every Friday</p>
+          <span class="badge bg-dark">Code: SWEET</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 border-danger">
+        <div class="card-body">
+          <span class="badge bg-danger fs-6">Free Delivery</span>
+          <p class="mt-2">On your first order</p>
+          <span class="badge bg-dark">Code: WELCOME</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gallery - My Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Horizontal navbar -->
+<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+  <div class="container">
+    <a class="navbar-brand" href="/home.html">My Website</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/home.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/gallery.html">Gallery</a></li>
+        <li class="nav-item"><a class="nav-link" href="/shop.html">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="/calculator.html">Calculator</a></li>
+        <li class="nav-item"><a class="nav-link" href="/sidebar.html">Sidebar</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact.html">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="/messages.html">Messages</a></li>
+      </ul>
+      <a class="btn btn-light btn-sm" href="/">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-4">
+  <h2 class="mb-3">Image Gallery</h2>
+  <div class="row g-3">
+    <div class="col-6 col-md-3"><img src="/images/gallery1.svg" class="img-fluid rounded" onclick="showImage(this.src)"></div>
+    <div class="col-6 col-md-3"><img src="/images/gallery2.svg" class="img-fluid rounded" onclick="showImage(this.src)"></div>
+    <div class="col-6 col-md-3"><img src="/images/gallery3.svg" class="img-fluid rounded" onclick="showImage(this.src)"></div>
+    <div class="col-6 col-md-3"><img src="/images/gallery4.svg" class="img-fluid rounded" onclick="showImage(this.src)"></div>
+    <div class="col-6 col-md-3"><img src="/images/gallery5.svg" class="img-fluid rounded" onclick="showImage(this.src)"></div>
+    <div class="col-6 col-md-3"><img src="/images/gallery6.svg" class="img-fluid rounded" onclick="showImage(this.src)"></div>
+    <div class="col-6 col-md-3"><img src="/images/gallery7.svg" class="img-fluid rounded" onclick="showImage(this.src)"></div>
+    <div class="col-6 col-md-3"><img src="/images/gallery8.svg" class="img-fluid rounded" onclick="showImage(this.src)"></div>
+  </div>
+
+  <!-- popup that shows the clicked image -->
+  <div class="modal fade" id="popup">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content"><img id="bigImage" class="w-100"></div>
+    </div>
+  </div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+function showImage(src) {
+  document.getElementById("bigImage").src = src;
+  new bootstrap.Modal("#popup").show();
+}
+</script>
+
+</body>
+</html>

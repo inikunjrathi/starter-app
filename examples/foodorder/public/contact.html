@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Contact Us - FoodieHub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Horizontal navbar -->
+<nav class="navbar navbar-expand-lg bg-danger" data-bs-theme="dark">
+  <div class="container">
+    <a class="navbar-brand" href="/home.html">FoodieHub</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/home.html">Home</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Menu</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/menu.html">All Items</a></li>
+            <li><a class="dropdown-item" href="/menu.html?category=Starters">Starters</a></li>
+            <li><a class="dropdown-item" href="/menu.html?category=Main Course">Main Course</a></li>
+            <li><a class="dropdown-item" href="/menu.html?category=Desserts">Desserts</a></li>
+            <li><a class="dropdown-item" href="/menu.html?category=Beverages">Beverages</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="/orders.html">My Orders</a></li>
+        <li class="nav-item"><a class="nav-link" href="/offers.html">Offers</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/contact.html">Contact Us</a></li>
+      </ul>
+      <a class="btn btn-light btn-sm" href="/">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-4">
+  <h2 class="mb-3">Contact Us</h2>
+  <div class="card" style="max-width:500px">
+    <div class="card-body">
+      <p><b>Address:</b> FoodieHub Kitchen, Viman Nagar, Pune</p>
+      <p><b>Phone:</b> +91 90000 12345</p>
+      <p class="mb-0"><b>Email:</b> orders@foodiehub.com</p>
+    </div>
+  </div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

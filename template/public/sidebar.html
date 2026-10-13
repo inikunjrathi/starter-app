@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sidebar - My Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="d-flex">
+  <!-- Vertical navbar (sidebar) -->
+  <nav class="nav nav-pills flex-column bg-dark p-3 vh-100" style="width:220px" data-bs-theme="dark">
+    <a class="navbar-brand text-white fs-4 mb-3" href="/home.html">My Website</a>
+    <a class="nav-link" href="/home.html">Home</a>
+    <a class="nav-link" href="/gallery.html">Gallery</a>
+    <a class="nav-link" href="/shop.html">Shop</a>
+    <a class="nav-link" href="/calculator.html">Calculator</a>
+    <a class="nav-link active" href="/sidebar.html">Sidebar</a>
+    <a class="nav-link" href="/contact.html">Contact</a>
+    <a class="nav-link" href="/messages.html">Messages</a>
+    <a class="nav-link mt-auto" href="/">Logout</a>
+  </nav>
+
+  <div class="flex-grow-1 p-4">
+    <h2>Vertical Navbar</h2>
+    <p>This page shows the menu as a sidebar on the left instead of a bar at the top.
+    The other pages use the horizontal navbar.</p>
+  </div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

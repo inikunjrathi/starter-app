@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Departments - Acme HR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="d-flex">
+  <!-- Vertical navbar (sidebar) -->
+  <nav class="nav nav-pills flex-column bg-dark p-3 vh-100" style="width:220px" data-bs-theme="dark">
+    <a class="navbar-brand text-white fs-4 mb-3" href="/home.html">Acme HR</a>
+    <a class="nav-link" href="/home.html">Home</a>
+    <a class="nav-link" href="/employees.html">Employees</a>
+    <a class="nav-link active" href="/departments.html">Departments</a>
+    <a class="nav-link" href="/contact.html">Contact Us</a>
+    <a class="nav-link mt-auto" href="/">Logout</a>
+  </nav>
+
+  <div class="flex-grow-1 p-4">
+    <h2 class="mb-3">Departments</h2>
+    <table class="table table-bordered" style="max-width:500px">
+      <thead class="table-dark"><tr><th>Department</th><th>Employees</th></tr></thead>
+      <tbody id="list"></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+const departments = ["Engineering", "Sales", "Marketing", "HR", "Finance", "Support"];
+
+// count employees in each department
+fetch("/api/employees")
+  .then(res => res.json())
+  .then(employees => {
+    const list = document.getElementById("list");
+    departments.forEach(d => {
+      const count = employees.filter(e => e.department === d).length;
+      const row = list.insertRow();
+      row.insertCell().innerHTML = `<a href="/employees.html?department=${d}">${d}</a>`;
+      row.insertCell().textContent = count;
+    });
+  });
+</script>
+
+</body>
+</html>

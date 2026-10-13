@@ -1,9 +1,0 @@
-<div id="banner" class="mb-4"></div>
-<h3 class="mb-3">Chef's Specials</h3>
-<div id="specials"></div>
-<script>
-carousel('#banner', ['images/banner1.svg', 'images/banner2.svg', 'images/banner3.svg']);
-cards('#specials', MENU.filter(m => [1, 4, 6].includes(m.id)).map(m => ({
-  title: m.name, text: `${m.category} · ${m.veg ? 'Veg' : 'Non-veg'}`, icon: 'fire', footer: '₹' + m.price,
-})));
-</script>
