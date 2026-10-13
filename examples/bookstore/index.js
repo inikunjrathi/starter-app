@@ -65,6 +65,7 @@ app.get("/api/books", async (req, res) => {
   res.json(await Book.find());
 });
 
-app.listen(3000, () =>
+// "127.0.0.1" = only this computer can open the site (other devices on the network can't)
+app.listen(3000, "127.0.0.1", () =>
   console.log("http://localhost:3000")
 );

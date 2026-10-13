@@ -9,6 +9,7 @@ examples/        complete answers to exam-style questions
   pizza/         the Pizza Store example from the PDF, exactly as given
   bookstore/     Set A: Online Bookstore
   foodorder/     Set F: Online Food Ordering
+  movies/        Movie Ticket Booking (tabs, accordion, popups, alert)
   hospital/  library/  college/  employees/  events/  hotel/
 ```
 
@@ -488,10 +489,13 @@ your `public/` folder, add a navbar link to it, and adjust:
 
 ### 13. Worked example: answering a new question
 
+The finished answer to this question is in `examples/movies`. These are the steps that turned the hotel
+example into it.
+
 > *"Movie Ticket Booking: navbar with Home, Movies, My Bookings, Contact Us. Carousel of movie posters.
 > Form: Customer Name, Movie (dropdown), Show Time, Number of Tickets, Date. Store in MongoDB."*
 
-1. **Copy the closest example:** `cp -r examples/hotel examples/movies` (or copy the folder in your file
+1. **Copy the closest example:** `cp -r examples/hotel examples/mymovies` (or copy the folder in your file
    manager). Hotel already has a booking form, a list page and cards.
 2. **`index.js`:** change the database to `.../movietickets`. Change `require("./models/Booking")` to
    `Ticket`, along with `new Booking` and `Booking.find()`. Set the field names in `app.post("/add")` to
@@ -503,12 +507,12 @@ your `public/` folder, add a navbar link to it, and adjust:
 4. **`public/` pages:**
    - `home.html`: put poster images in `public/images/` and change the carousel `src` values.
    - `rooms.html`: rename to `movies.html` and turn the cards into one card per movie.
-   - `booking.html`: change the form fields: a text input, a movie `<select>`, a show-time `<select>` or
-     `type="time"`, a `type="number"` with `min="1"` for tickets, and a `type="date"`.
-   - `bookings.html`: rename to `mybookings.html`, then change the headings, `fetch("/api/tickets")` and the
-     `item.` lines.
-5. **Navbar:** change the links to Home, Movies, Book Tickets and My Bookings, and paste the new navbar into
-   every page.
+   - `booking.html`: rename to `book.html` and change the form fields: a text input, a movie `<select>`, a
+     show-time `<select>` or `type="time"`, a `type="number"` with `min="1"` for tickets, and a `type="date"`.
+   - `bookings.html`: change the heading to My Bookings, plus the `<th>` headings, `fetch("/api/tickets")`
+     and the `item.` lines.
+5. **Navbar:** change the links to Home, Movies, Book Tickets, My Bookings and Contact Us, and paste the new
+   navbar into every page.
 6. **Run it:** `node index.js`, sign up, book a ticket, and check `movietickets → tickets` in Compass.
 
 ### 14. Common mistakes
@@ -543,6 +547,11 @@ Copy these blocks from the example files:
 | A second form and model                | `examples/foodorder`: `/order` route, `models/Order.js`, `orders.html`          |
 | Server-side check (dates)              | `examples/hotel/index.js`, `examples/library/index.js`                              |
 | Count records per group                | `examples/employees/public/departments.html`                                          |
+| **Tabs** | `examples/movies/public/home.html` (Now Showing / Coming Soon) |
+| **Accordion** (FAQ) | `examples/movies/public/home.html` |
+| **Modal** (popup window) | `examples/movies/public/movies.html` (Details button on each card) |
+| **Alert** (coloured message box) | `examples/movies/public/book.html` |
+| Server check: no past dates | `examples/movies/index.js` |
 | **Image gallery** with popup     | `template/public/gallery.html`                                                        |
 | **Add to cart**                  | `template/public/shop.html`                                                           |
 | **Calculator**                   | `template/public/calculator.html`                                                     |
@@ -560,6 +569,7 @@ Copy these blocks from the example files:
 | `examples/college`           | `college`   | Home, Courses, Admission, Students, Contact Us              | name, email, phone, DOB, gender, course, %, address → `students`                    |
 | `examples/employees`         | `company`   | sidebar: Home, Employees, Departments, Contact Us           | name, email, department, designation, salary, joining date → `employees`            |
 | `examples/events`            | `techfest`  | Home, Events, Register, Participants, Contact Us            | name, email, phone, college, year, event → `registrations`                          |
+| `examples/movies` | `movietickets` | Home, Movies, Book Tickets, My Bookings, Contact Us | customer, movie, show time, date, tickets → `tickets` |
 | `examples/hotel`             | `hotel`     | Home, Rooms, Book a Room, Bookings, Contact Us              | guest, email, phone, room type, check-in/out, guests → `bookings`                   |
 
 Mongoose names the collection after the model: model `Book` → collection `books`. To choose the name
@@ -569,7 +579,10 @@ yourself, add it as a third argument like the Pizza example: `mongoose.model("Pi
 
 - Login checks the password but doesn't remember who is logged in (no sessions), the same level as
   the class example. Pages can still be opened directly by URL.
-- Every list page shows all records from everyone.
+- Every list page shows all records from everyone. To keep that data private, the apps listen on
+  `127.0.0.1` (`app.listen(3000, "127.0.0.1", ...)`), so only the computer running them can open the site.
+  To open it from a phone or another laptop on the same Wi-Fi, remove `"127.0.0.1", ` from that line.
+  Anyone on the network can then see and add data.
 - If MongoDB isn't running, `node index.js` still starts, but the first form submit waits 10 seconds and the
   server stops with `buffering timed out`. Start MongoDB and run it again.
 - `Error: listen EADDRINUSE :::3000` means another app is still running. Stop it with `Ctrl + C`.

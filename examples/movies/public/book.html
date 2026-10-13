@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Book Tickets - CineMax</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Horizontal navbar -->
+<nav class="navbar navbar-expand-lg bg-danger" data-bs-theme="dark">
+  <div class="container">
+    <a class="navbar-brand" href="/home.html">CineMax</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/home.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/movies.html">Movies</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/book.html">Book Tickets</a></li>
+        <li class="nav-item"><a class="nav-link" href="/bookings.html">My Bookings</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact.html">Contact Us</a></li>
+      </ul>
+      <a class="btn btn-light btn-sm" href="/">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-4">
+  <!-- Alert: a coloured message box -->
+  <div class="alert alert-info" style="max-width:600px">
+    Ticket price: Rs. 150 - 200 per seat. Maximum 10 tickets per booking.
+  </div>
+
+  <div class="card" style="max-width:600px">
+    <div class="card-body">
+      <h4 class="mb-3">Book Tickets</h4>
+      <form action="/add" method="post">
+
+        <label class="form-label">Customer Name</label>
+        <input class="form-control mb-3" name="customer" type="text" required>
+
+        <label class="form-label">Movie</label>
+        <select class="form-select mb-3" name="movie" required>
+          <option value="">Select Movie</option>
+          <option>Interstellar</option>
+          <option>3 Idiots</option>
+          <option>Dangal</option>
+          <option>Inception</option>
+        </select>
+
+        <label class="form-label">Show Time</label>
+        <select class="form-select mb-3" name="showTime" required>
+          <option value="">Select Show Time</option>
+          <option>10:00 AM</option>
+          <option>1:30 PM</option>
+          <option>6:00 PM</option>
+          <option>9:30 PM</option>
+        </select>
+
+        <label class="form-label">Date</label>
+        <input class="form-control mb-3" name="date" type="date" required>
+
+        <label class="form-label">Number of Tickets</label>
+        <input class="form-control mb-3" name="tickets" type="number" min="1" max="10" required>
+
+        <button type="submit" class="btn btn-primary">Book Now</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

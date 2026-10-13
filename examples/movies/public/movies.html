@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Movies - CineMax</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Horizontal navbar -->
+<nav class="navbar navbar-expand-lg bg-danger" data-bs-theme="dark">
+  <div class="container">
+    <a class="navbar-brand" href="/home.html">CineMax</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/home.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/movies.html">Movies</a></li>
+        <li class="nav-item"><a class="nav-link" href="/book.html">Book Tickets</a></li>
+        <li class="nav-item"><a class="nav-link" href="/bookings.html">My Bookings</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact.html">Contact Us</a></li>
+      </ul>
+      <a class="btn btn-light btn-sm" href="/">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-4">
+  <h2 class="mb-3">Now Showing</h2>
+  <div class="row g-3">
+    <div class="col-md-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Interstellar</h5>
+          <p class="card-text text-secondary">Sci-Fi | 2h 49m</p>
+          <p class="mb-0"><span class="badge bg-success">Rs. 200</span></p>
+        </div>
+        <div class="card-footer">
+          <!-- data-bs-target must match the modal's id -->
+          <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#movie1">Details</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">3 Idiots</h5>
+          <p class="card-text text-secondary">Comedy / Drama | 2h 50m</p>
+          <p class="mb-0"><span class="badge bg-success">Rs. 150</span></p>
+        </div>
+        <div class="card-footer">
+          <!-- data-bs-target must match the modal's id -->
+          <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#movie2">Details</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Dangal</h5>
+          <p class="card-text text-secondary">Sports / Drama | 2h 41m</p>
+          <p class="mb-0"><span class="badge bg-success">Rs. 150</span></p>
+        </div>
+        <div class="card-footer">
+          <!-- data-bs-target must match the modal's id -->
+          <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#movie3">Details</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Inception</h5>
+          <p class="card-text text-secondary">Sci-Fi / Thriller | 2h 28m</p>
+          <p class="mb-0"><span class="badge bg-success">Rs. 180</span></p>
+        </div>
+        <div class="card-footer">
+          <!-- data-bs-target must match the modal's id -->
+          <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#movie4">Details</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- popup (modal) for Interstellar -->
+  <div class="modal fade" id="movie1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Interstellar</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p><span class="badge bg-info text-dark">Sci-Fi</span> <span class="badge bg-secondary">2h 49m</span></p>
+          <p>A team of explorers travels through a wormhole in space to find a new home for humanity.</p>
+          <p class="mb-0"><b>Ticket price:</b> Rs. 200</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <a class="btn btn-danger" href="/book.html">Book Tickets</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- popup (modal) for 3 Idiots -->
+  <div class="modal fade" id="movie2">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">3 Idiots</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p><span class="badge bg-info text-dark">Comedy / Drama</span> <span class="badge bg-secondary">2h 50m</span></p>
+          <p>Two friends search for their long-lost college buddy and remember their days at engineering college.</p>
+          <p class="mb-0"><b>Ticket price:</b> Rs. 150</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <a class="btn btn-danger" href="/book.html">Book Tickets</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- popup (modal) for Dangal -->
+  <div class="modal fade" id="movie3">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Dangal</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p><span class="badge bg-info text-dark">Sports / Drama</span> <span class="badge bg-secondary">2h 41m</span></p>
+          <p>A former wrestler trains his daughters to become world-class wrestlers.</p>
+          <p class="mb-0"><b>Ticket price:</b> Rs. 150</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <a class="btn btn-danger" href="/book.html">Book Tickets</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- popup (modal) for Inception -->
+  <div class="modal fade" id="movie4">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Inception</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p><span class="badge bg-info text-dark">Sci-Fi / Thriller</span> <span class="badge bg-secondary">2h 28m</span></p>
+          <p>A thief who steals secrets through dreams is given the task of planting an idea instead.</p>
+          <p class="mb-0"><b>Ticket price:</b> Rs. 180</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <a class="btn btn-danger" href="/book.html">Book Tickets</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
