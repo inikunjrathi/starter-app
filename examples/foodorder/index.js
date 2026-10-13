@@ -24,6 +24,9 @@ app.post("/signup", async (req, res) => {
 
   const { name, email, password } = req.body;
 
+  if (typeof email !== "string" || typeof password !== "string")
+    return res.send("Email and password required. <a href='/signup.html'>Try again</a>");
+
   if (await User.findOne({ email }))
     return res.send("Email already registered. <a href='/signup.html'>Try again</a>");
 
@@ -39,6 +42,9 @@ app.post("/signup", async (req, res) => {
 app.post("/login", async (req, res) => {
 
   const { email, password } = req.body;
+
+  if (typeof email !== "string" || typeof password !== "string")
+    return res.send("Email and password required. <a href='/'>Try again</a>");
 
   const user = await User.findOne({ email });
 
