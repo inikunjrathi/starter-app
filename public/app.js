@@ -6,7 +6,7 @@ const auth = {
   login: u => { localStorage.setItem('user', JSON.stringify(u)); renderNav(); },
   logout: () => { localStorage.removeItem('user'); renderNav(); go(firstPage()); },
 };
-const go = page => location.hash === '#' + page ? loadPage() : (location.hash = '#' + page);
+const go = page => current() === page ? loadPage() : (location.hash = '#' + encodeURI(page));
 // api(url) = GET, api(url, data) = POST, api(url, data, 'PUT'), api(url, null, 'DELETE')
 async function api(url, data, method = data ? 'POST' : 'GET') {
   const headers = { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (auth.user()?.token || '') };
@@ -15,7 +15,13 @@ async function api(url, data, method = data ? 'POST' : 'GET') {
   if (!res.ok) throw new Error(json.error || 'Request failed');
   return json;
 }
-const label = name => CONFIG.labels?.[name] || name.charAt(0).toUpperCase() + name.slice(1).replace(/[-_]/g, ' ');
+// Menu entries can carry parameters: 'menu?cat=Starters' opens pages/menu.html, which reads pageParams().cat
+const current = () => decodeURIComponent(location.hash.slice(1)) || firstPage();
+const pageOf = entry => entry.split('?')[0];
+const pageParams = () => Object.fromEntries(new URLSearchParams(current().split('?')[1] || ''));
+const label = name => CONFIG.labels?.[name]
+  || (name.includes('?') ? [...new URLSearchParams(name.split('?')[1]).values()].pop() // 'menu?cat=Starters' -> 'Starters'
+  : name.charAt(0).toUpperCase() + name.slice(1).replace(/[-_]/g, ' '));
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
 const isProtected = page => CONFIG.requireLogin ? !CONFIG.authPages.includes(page) : CONFIG.protected.includes(page);
 
@@ -25,8 +31,8 @@ const firstPage = () => allPages()[0];
 
 function renderNav() {
   const user = auth.user();
-  const ok = p => user || !isProtected(p);
-  const link = (p, cls = 'nav-link') => `<li class="nav-item"><a class="${cls}" href="#${p}" data-page="${p}">${label(p)}</a></li>`;
+  const ok = p => user || !isProtected(pageOf(p));
+  const link = (p, cls = 'nav-link') => `<li class="nav-item"><a class="${cls}" href="#${encodeURI(p)}" data-page="${esc(p)}">${esc(label(p))}</a></li>`;
   const build = groupHtml => CONFIG.pages.map(p => typeof p === 'string'
     ? (ok(p) ? link(p) : '')
     : Object.entries(p).map(([group, list]) => list.some(ok) ? groupHtml(group, list.filter(ok)) : '').join('')).join('');
@@ -48,13 +54,12 @@ function renderNav() {
 }
 
 function highlight() {
-  const page = location.hash.slice(1) || firstPage();
-  document.querySelectorAll('[data-page]').forEach(a => a.classList.toggle('active', a.dataset.page === page));
+  document.querySelectorAll('[data-page]').forEach(a => a.classList.toggle('active', a.dataset.page === current()));
 }
 
 async function loadPage() {
-  const page = location.hash.slice(1) || firstPage();
-  const allowed = [...allPages(), ...CONFIG.authPages];
+  const page = pageOf(current());
+  const allowed = [...allPages().map(pageOf), ...CONFIG.authPages];
   const main = document.getElementById('content');
   if (!allowed.includes(page)) { main.innerHTML = '<h2>404 - Page not found</h2>'; return; }
   if (isProtected(page) && !auth.user()) { go('login'); return; }
@@ -77,9 +82,13 @@ async function loadPage() {
 
 // Form -> MongoDB -> table, for "enter these details and store them in the database" tasks.
 // crudForm({ collection: 'books', fields: ['Book Name', { label: 'Price', type: 'number' }], form: '#f', table: '#t' })
-// Field: 'Label' (text) or { label, name?, type?: text|number|email|date|tel|textarea, options?: [...], required?: true }
-// form and table are optional CSS selectors; show either or both.
-function crudForm({ collection, fields, form: formSel, table: tableSel, submitText = 'Save' }) {
+// Field: 'Label' (text) or { label, name?, type?: text|number|email|date|time|tel|textarea, options?: [...],
+//   required?: true, min?, max?, pattern?, placeholder? }
+// fields can be left out if CONFIG.forms[collection] lists them. form and table are optional CSS selectors.
+// search: true adds a search box above the table.
+// validate: data => 'error message' (or nothing if OK), for checks like dates in the right order.
+function crudForm({ collection, fields = CONFIG.forms?.[collection], form: formSel, table: tableSel, submitText = 'Save', search = false, validate }) {
+  if (!fields) throw new Error(`crudForm: no fields for "${collection}" (pass fields or add CONFIG.forms.${collection})`);
   const url = `/api/data/${collection}`;
   const spec = fields.map(f => typeof f === 'string' ? { label: f } : f).map(f => ({
     type: 'text', required: true,
@@ -92,7 +101,8 @@ function crudForm({ collection, fields, form: formSel, table: tableSel, submitTe
 
   if (form) {
     form.innerHTML = spec.map(f => {
-      const attrs = `class="${f.options ? 'form-select' : 'form-control'}" name="${f.name}" id="f-${f.name}" ${f.required ? 'required' : ''}`;
+      const extra = ['min', 'max', 'pattern', 'placeholder'].map(k => f[k] != null ? `${k}="${esc(f[k])}"` : '').join(' ');
+      const attrs = `class="${f.options ? 'form-select' : 'form-control'}" name="${f.name}" id="f-${f.name}" ${f.required ? 'required' : ''} ${extra}`;
       const input = f.options ? `<select ${attrs}><option value="">Choose...</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>`
         : f.type === 'textarea' ? `<textarea ${attrs} rows="3"></textarea>`
         : `<input ${attrs} type="${f.type}" ${f.type === 'number' ? 'step="any"' : ''}>`;
@@ -107,6 +117,8 @@ function crudForm({ collection, fields, form: formSel, table: tableSel, submitTe
       e.preventDefault();
       if (!form.reportValidity()) return; // never save a record with missing required fields
       const data = Object.fromEntries(spec.map(f => [f.name, f.type === 'number' ? +form.elements[f.name].value : form.elements[f.name].value]));
+      const problem = validate?.(data);
+      if (problem) { msg.innerHTML = `<div class="alert alert-danger py-2">${esc(problem)}</div>`; return; }
       try {
         await (editing ? api(`${url}/${editing}`, data, 'PUT') : api(url, data));
         msg.innerHTML = `<div class="alert alert-success py-2">${editing ? 'Updated' : 'Saved'}!</div>`;
@@ -120,18 +132,49 @@ function crudForm({ collection, fields, form: formSel, table: tableSel, submitTe
     if (!table) return;
     let rows;
     try { rows = await api(url); } catch (err) { table.innerHTML = `<div class="alert alert-warning">${esc(err.message)}</div>`; return; }
-    const me = auth.user()?.email;
-    table.innerHTML = `<div class="table-responsive"><table class="table table-striped align-middle">
+    const q = table.querySelector('[data-search]')?.value || '';
+    table.innerHTML = (search ? `<input class="form-control mb-3" data-search placeholder="Search..." style="max-width:400px">` : '') + `<div class="table-responsive"><table class="table table-striped align-middle">
       <thead><tr>${spec.map(f => `<th>${esc(f.label)}</th>`).join('')}<th></th></tr></thead>
-      <tbody>${rows.map(r => `<tr>${spec.map(f => `<td>${esc(r[f.name])}</td>`).join('')}<td class="text-end text-nowrap">${r.user === me ? `
-        ${form ? `<button class="btn btn-sm btn-outline-primary" data-edit="${r._id}">Edit</button>` : ''}
-        <button class="btn btn-sm btn-outline-danger" data-del="${r._id}">Delete</button>` : ''}</td></tr>`).join('')
+      <tbody>${rows.map(r => `<tr>${spec.map(f => `<td>${esc(r[f.name])}</td>`).join('')}<td class="text-end text-nowrap">${r.mine ? `
+        ${form ? `<button class="btn btn-sm btn-outline-primary" data-edit="${esc(r._id)}">Edit</button>` : ''}
+        <button class="btn btn-sm btn-outline-danger" data-del="${esc(r._id)}">Delete</button>` : ''}</td></tr>`).join('')
         || `<tr><td colspan="${spec.length + 1}" class="text-body-secondary">No records yet</td></tr>`}</tbody></table></div>`;
     table.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => form._edit(rows.find(r => r._id === b.dataset.edit)));
+    const box = table.querySelector('[data-search]');
+    if (box) {
+      const filter = () => table.querySelectorAll('tbody tr').forEach(tr => tr.hidden = !tr.textContent.toLowerCase().includes(box.value.toLowerCase()));
+      box.value = q; box.oninput = filter; filter();
+    }
     table.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => { await api(`${url}/${b.dataset.del}`, null, 'DELETE'); load(); });
   }
   load();
   return { reload: load };
+}
+
+// carousel('#banner', ['images/a.jpg', { src: 'images/b.jpg', title: 'Sale', text: '50% off' }])
+function carousel(sel, slides, interval = 3000) {
+  const el = document.querySelector(sel);
+  const id = 'carousel-' + Math.random().toString(36).slice(2);
+  slides = slides.map(s => typeof s === 'string' ? { src: s } : s);
+  el.innerHTML = `<div id="${id}" class="carousel slide">
+    <div class="carousel-indicators">${slides.map((_, i) => `<button data-bs-target="#${id}" data-bs-slide-to="${i}" class="${i ? '' : 'active'}"></button>`).join('')}</div>
+    <div class="carousel-inner rounded">${slides.map((s, i) => `<div class="carousel-item ${i ? '' : 'active'}">
+      <img src="${esc(s.src)}" class="d-block w-100" alt="${esc(s.title)}">
+      ${s.title || s.text ? `<div class="carousel-caption"><h5>${esc(s.title)}</h5><p>${esc(s.text)}</p></div>` : ''}</div>`).join('')}</div>
+    <button class="carousel-control-prev" data-bs-target="#${id}" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+    <button class="carousel-control-next" data-bs-target="#${id}" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+  </div>`;
+  bootstrap.Carousel.getOrCreateInstance('#' + id, { interval }).cycle();
+}
+
+// cards('#doctors', [{ title: 'Dr. Rao', text: 'Cardiologist', img: 'images/x.jpg', icon: 'heart-pulse', footer: 'Mon-Fri' }])
+function cards(sel, items, cols = 'col-sm-6 col-lg-4') {
+  document.querySelector(sel).innerHTML = `<div class="row g-3">${items.map(c => `<div class="${cols}"><div class="card h-100">
+    ${c.img ? `<img src="${esc(c.img)}" class="card-img-top" alt="">` : ''}
+    <div class="card-body">${c.icon ? `<i class="bi bi-${esc(c.icon)} fs-2 text-primary"></i>` : ''}
+      <h5 class="card-title mt-1">${esc(c.title)}</h5><p class="card-text">${esc(c.text)}</p></div>
+    ${c.footer ? `<div class="card-footer text-body-secondary small">${esc(c.footer)}</div>` : ''}
+  </div></div>`).join('')}</div>`;
 }
 
 document.title = CONFIG.title;

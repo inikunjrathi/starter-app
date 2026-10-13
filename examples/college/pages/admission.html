@@ -1,0 +1,8 @@
+<h2 class="mb-3">Admission Form</h2>
+<div class="card" style="max-width:600px"><div class="card-body"><form id="admissionForm"></form></div></div>
+<script>
+crudForm({
+  collection: 'students', form: '#admissionForm', submitText: 'Submit Application',
+  validate: d => new Date(d.dob) > new Date(new Date().getFullYear() - 15, 0) ? 'Applicant must be at least 15 years old' : '',
+});
+</script>

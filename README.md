@@ -52,55 +52,108 @@ On Windows (PowerShell): `$env:SECRET="some-long-random-text"; npm start`
 ## Exam-style questions (quick recipe)
 
 Most questions look like: *"Website with login, a navbar with pages X, Y, Z, an image carousel,
-and a form with fields A, B, C stored in MongoDB."* A complete answer for one such question is in
-[`examples/bookstore/`](examples/bookstore) (Set A: Online Bookstore). Run it with:
+and a form with fields A, B, C stored in MongoDB."* `examples/` has 9 complete answers. Run any of them:
 
 ```bash
-SITE=examples/bookstore npm start       # Windows PowerShell: $env:SITE="examples/bookstore"; npm start
+SITE=examples/hospital npm start       # Windows PowerShell: $env:SITE="examples/hospital"; npm start
 ```
 
-Then open MongoDB Compass → connect to `mongodb://127.0.0.1:27017` → database **bookstore** →
-collection **books** to show the stored records.
+| Example | Navbar | Form → collection | Extras | Database |
+|---------|--------|-------------------|--------|----------|
+| `bookstore` (Set A) | Home, Books, Categories, Contact Us | Book Name, Author, Category, Price → `books` | books per category | `bookstore` |
+| `hospital` | Home, Patients, Doctors, Contact Us | patient name, age, gender, blood group, disease, doctor, admission date, phone → `patients` | doctor cards | `hospital` |
+| `library` | Home, Book Catalog, Issue Book, Contact Us | student, roll no, book, issue/return date, status → `issues` | copies available per book; return date must be after issue date | `library` |
+| `college` | Home, Courses, Admission, Students, Contact Us | name, email, phone, DOB, gender, course, 12th %, address → `students` | course cards; age check; anyone can apply, list needs login | `college` |
+| `employees` | Home, Employees, Departments, Contact Us | name, email, department, designation, salary, joining date → `employees` | stats on home; staff and salary per department; sidebar layout | `company` |
+| `restaurant` | Home, Menu, My Orders, Book a Table, Contact Us | reservation → `reservations`; cart checkout → `orders` | menu by category with add to cart | `restaurant` |
+| `events` | Home, Events, Register, Participants, Contact Us | name, email, phone, college, year, event → `registrations` | registrations per event; filter participants by event; dark theme | `techfest` |
+| `foodorder` (Set F) | Home, Menu ▾ (All Items, Starters, Main Course, Desserts, Beverages), My Orders, Offers, Contact Us | Food Item Name, Category, Type (Veg/Non-Veg), Price, Availability, Popular → `fooditems` | Veg, Popular, Not Available and Offer badges; cart with coupon codes → `orders`; "Add sample items" button | `foodorder` |
+| `hotel` | Home, Rooms, Book a Room, Contact Us | guest, email, phone, room type, check-in/out, guests → `bookings` | live price estimate; date and guest-count checks | `hotel` |
 
-To answer a new question (say *Set B: Hospital with patients*), either edit `public/` directly, or:
+To show the stored data, open MongoDB Compass → connect to `mongodb://127.0.0.1:27017` → open the
+database from the table → open the collection. Each database has its own `users`, so sign up once per example.
 
-1. Copy the example: `cp -r examples/bookstore examples/hospital`
-2. In `examples/hospital/config.js` set `title`, `pages` (one name per navbar item), `labels`
-   for menu text with spaces (`{ contact: 'Contact Us' }`), `database: 'hospital'`, `shared: ['patients']`.
-3. Make one file per navbar item in `examples/hospital/pages/`, and delete the bookstore ones you don't need.
-   Files you don't provide (like `login.html`) come from `public/pages/`.
-4. For the form, only list the fields; `crudForm` builds the form, saves to MongoDB and shows the table:
+### Answering a new question
+
+1. **Copy the closest example:** `cp -r examples/hospital examples/myanswer` (or copy the folder in your file manager).
+2. **Edit `examples/myanswer/config.js`:**
+   - `title`, and `pages`: one file name per navbar item, in order
+   - `labels` for menu text with spaces or capitals, e.g. `{ contact: 'Contact Us', issue: 'Issue Book' }`
+   - `database` (the name to show in Compass) and `shared` (collections everyone can see)
+   - `forms`: the fields asked for in the question, one list per collection
+   - `requireLogin: true` if the question asks for a login facility
+   - For a dropdown that opens one page with different filters, add parameters to the entries:
+     `{ Menu: ['menu', 'menu?cat=Starters', 'menu?cat=Desserts'] }`. Each shows as "Starters", "Desserts"
+     (the last parameter value), and `pages/menu.html` reads the filter with `pageParams().cat`.
+     See `examples/foodorder`.
+3. **Make one file per navbar item** in `examples/myanswer/pages/` and delete the ones you don't need.
+   `contact`, `login` and `signup` already exist in `public/pages/`, so just list them in `pages`.
+4. **Run it:** `SITE=examples/myanswer npm start`
+
+A page with a form and a table of saved records is just:
 
 ```html
 <form id="patientForm"></form>
 <div id="patientTable"></div>
 <script>
-crudForm({
-  collection: 'patients',                 // MongoDB collection
-  fields: [
-    'Patient Name',                       // text box, saved as patientName
-    { label: 'Age', type: 'number' },
-    { label: 'Gender', options: ['Male', 'Female', 'Other'] },   // dropdown
-    { label: 'Admission Date', type: 'date' },
-    { label: 'Email', type: 'email' },
-    { label: 'Address', type: 'textarea', required: false },
-  ],
-  form: '#patientForm',                   // leave out to show only the table
-  table: '#patientTable',                 // leave out to show only the form
-  submitText: 'Add Patient',
-});
+crudForm({ collection: 'patients', form: '#patientForm', table: '#patientTable', submitText: 'Add Patient' });
 </script>
 ```
 
-5. Run `SITE=examples/hospital npm start`.
+with the fields in `config.js`:
 
-Field types: `text` (default), `number`, `email`, `date`, `tel`, `password`, `textarea`, or a dropdown via `options`.
-All fields are required unless you add `required: false`. The saved field name is the label in
-camelCase (`'Book Name'` → `bookName`); set `name: '...'` to choose your own. The table shows Edit and
-Delete buttons on records you created.
+```js
+forms: {
+  patients: [
+    'Patient Name',                                            // text box, saved as patientName
+    { label: 'Age', type: 'number', min: 0, max: 120 },
+    { label: 'Gender', options: ['Male', 'Female', 'Other'] }, // dropdown
+    { label: 'Admission Date', type: 'date' },
+    { label: 'Phone', type: 'tel', pattern: '[0-9]{10}' },
+    { label: 'Address', type: 'textarea', required: false },
+  ],
+},
+```
 
-For a carousel, copy the `<div id="banner" ...>` block from `examples/bookstore/pages/home.html` and
-put your images in `images/`.
+### Helper reference
+
+All helpers can be used in any page script.
+
+**`crudForm({ collection, form, table, fields, submitText, search, validate })`** builds a form,
+saves to MongoDB and shows the records in a table with Edit and Delete buttons on your own records.
+- `form` / `table`: CSS selectors; give one or both (a form-only page, a list-only page, or both)
+- `fields`: leave out to use `CONFIG.forms[collection]`
+- `search: true`: adds a search box above the table
+- `validate: d => 'message'`: extra checks before saving; return an error message, or nothing if OK.
+  Example: `validate: d => d.returnDate < d.issueDate ? 'Return date must be after issue date' : ''`
+
+Fields:
+- **Types:** `text` (default), `number`, `email`, `date`, `time`, `tel`, `password`, `textarea`, or a dropdown via `options: [...]`.
+- **Extra settings:** `min`, `max`, `pattern`, `placeholder`.
+- **Required:** all fields are required unless you add `required: false`.
+- **Saved name:** the label in camelCase (`'Book Name'` → `bookName`). Set `name: '...'` to choose your own.
+
+**`carousel('#el', ['images/a.svg', { src: 'images/b.jpg', title: 'Sale', text: '50% off' }])`**
+creates an image slider inside `<div id="el"></div>`.
+
+**`cards('#el', [{ title, text, icon, img, footer }])`** shows a grid of cards. `icon` is any
+[Bootstrap Icons](https://icons.getbootstrap.com) name such as `'heart-pulse'`. An optional third argument sets the
+column classes (default `'col-sm-6 col-lg-4'`).
+
+**`pageParams()`** returns the parameters of the current menu entry, e.g. `{ cat: 'Starters' }` for `#menu?cat=Starters`.
+
+**Badges** are plain Bootstrap: `<span class="badge bg-success">Veg</span>`, `bg-danger`, `bg-warning text-dark`,
+`rounded-pill`. See `examples/foodorder/pages/menu.html`.
+
+**`api(url, data, method)`**, **`auth.user()`**, **`go('page')`** and **`esc(text)`**: see
+[Save data in MongoDB](#5-save-data-in-mongodb-no-server-changes-needed). `go` opens a page, and `esc` makes
+text safe to put inside HTML.
+
+Lists for dropdowns and cards (doctors, rooms, courses...) go at the top of `config.js` as
+`const DOCTORS = [...]`. Every page can use them, and `forms` can reference them
+(`options: DOCTORS.map(d => d.name)`).
+
+Contact Us details come from `contact: { address, phone, email }` in `config.js`.
 
 ## Customize it
 
@@ -165,6 +218,7 @@ Custom keys work too: put your own data in `CONFIG` (e.g. `categories: [...]`) a
 | `profile` | Your details and past orders (login required) | MongoDB `orders` |
 | `notes` | Create, edit, delete notes (login required) | MongoDB `notes` |
 | `messages` | Messages you sent from the form (login required) | MongoDB `contacts` |
+| `contact` | Contact Us form plus `CONFIG.contact` details | MongoDB `contacts` |
 | `login`, `signup` | Accounts with hashed passwords | MongoDB `users` |
 
 "Browser" means the data is kept in `localStorage` on that computer only.
@@ -237,7 +291,8 @@ See `notes.html` for a complete hand-written create/read/update/delete example, 
 starter-app/
 ├── server.js          Express server: login/signup + /api/data routes
 ├── examples/
-│   └── bookstore/     Set A answer: config.js, pages/, images/ (run with SITE=examples/bookstore)
+│   ├── bookstore/     Set A answer: config.js, pages/, images/ (run with SITE=examples/bookstore)
+│   └── ...            hospital, library, college, employees, restaurant, events, foodorder, hotel
 ├── package.json
 └── public/
     ├── config.js      MAIN FILE: choose pages, layout, theme
@@ -259,6 +314,7 @@ starter-app/
 | PUT | `/api/data/:collection/:id` | fields to change | Login required; your records only |
 | DELETE | `/api/data/:collection/:id` | – | Login required; your records only |
 
+Records come back without the owner's email; instead each has `mine: true/false`.
 Logged-in requests send `Authorization: Bearer <token>` (`api()` does this for you).
 Collection names may contain only letters, numbers and `_`, and `users` can't be accessed.
 

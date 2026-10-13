@@ -1,0 +1,10 @@
+<h2 class="mb-3">Participants</h2>
+<select class="form-select mb-3" id="eventFilter" style="max-width:300px"><option value="">All events</option></select>
+<div id="list"></div>
+<script>
+const filter = document.getElementById('eventFilter');
+filter.innerHTML += EVENTS.map(e => `<option>${esc(e.name)}</option>`).join('');
+crudForm({ collection: 'registrations', table: '#list', search: true });
+// dropdown filter reuses the table's search box
+filter.onchange = () => { const box = document.querySelector('#list [data-search]'); box.value = filter.value; box.oninput(); };
+</script>

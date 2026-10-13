@@ -6,17 +6,16 @@
 api('/api/data/books').then(books => {
   const show = cat => {
     document.getElementById('catTitle').textContent = cat;
-    const list = books.filter(b => b.category === cat);
-    document.getElementById('catBooks').innerHTML = list.map(b =>
+    document.getElementById('catBooks').innerHTML = books.filter(b => b.category === cat).map(b =>
       `<li class="list-group-item d-flex justify-content-between"><span><b>${esc(b.bookName)}</b> by ${esc(b.authorName)}</span><span>₹${esc(b.price)}</span></li>`
     ).join('') || '<li class="list-group-item text-body-secondary">No books in this category yet</li>';
   };
-  document.getElementById('cats').innerHTML = CONFIG.categories.map(c => `
+  document.getElementById('cats').innerHTML = CATEGORIES.map(c => `
     <div class="col-6 col-md-4 col-lg-2"><button class="card w-100 text-center h-100" data-cat="${esc(c)}"><div class="card-body">
       <i class="bi bi-book fs-2 text-primary"></i><h6 class="mt-2 mb-0">${esc(c)}</h6>
       <small class="text-body-secondary">${books.filter(b => b.category === c).length} books</small>
     </div></button></div>`).join('');
   document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => show(b.dataset.cat));
-  show(CONFIG.categories[0]);
+  show(CATEGORIES[0]);
 }).catch(e => document.getElementById('cats').textContent = e.message);
 </script>

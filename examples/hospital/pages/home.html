@@ -1,0 +1,12 @@
+<div id="banner" class="mb-4"></div>
+<div class="row g-4">
+  <div class="col-lg-5"><div class="card"><div class="card-body">
+    <h4 class="mb-3">Register Patient</h4>
+    <form id="patientForm"></form>
+  </div></div></div>
+  <div class="col-lg-7"><h4 class="mb-3">Recent Patients</h4><div id="recent"></div></div>
+</div>
+<script>
+carousel('#banner', ['images/banner1.svg', 'images/banner2.svg', 'images/banner3.svg']);
+crudForm({ collection: 'patients', form: '#patientForm', table: '#recent', submitText: 'Register' });
+</script>

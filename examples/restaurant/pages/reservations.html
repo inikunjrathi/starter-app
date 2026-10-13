@@ -1,0 +1,13 @@
+<div class="row g-4">
+  <div class="col-lg-5"><div class="card"><div class="card-body">
+    <h4 class="mb-3">Book a Table</h4>
+    <form id="resForm"></form>
+  </div></div></div>
+  <div class="col-lg-7"><h4 class="mb-3">My Reservations</h4><div id="resTable"></div></div>
+</div>
+<script>
+crudForm({
+  collection: 'reservations', form: '#resForm', table: '#resTable', submitText: 'Reserve',
+  validate: d => d.date < new Date().toLocaleDateString('en-CA') ? 'Pick today or a future date' : '',
+});
+</script>

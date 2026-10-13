@@ -1,0 +1,17 @@
+<h2 class="mb-3">Contact Us</h2>
+<div class="row g-4">
+  <div class="col-md-6"><div class="card"><div class="card-body"><form id="contactForm"></form></div></div></div>
+  <div class="col-md-6" id="contactInfo"></div>
+</div>
+<script>
+// Fields come from CONFIG.forms.contacts if set; contact details from CONFIG.contact
+crudForm({
+  collection: 'contacts',
+  fields: CONFIG.forms?.contacts || ['Name', { label: 'Email', type: 'email' }, { label: 'Message', type: 'textarea' }],
+  form: '#contactForm',
+  submitText: 'Send',
+});
+const info = CONFIG.contact || {};
+document.getElementById('contactInfo').innerHTML = [['geo-alt', info.address], ['telephone', info.phone], ['envelope', info.email]]
+  .filter(([, v]) => v).map(([icon, v]) => `<p><i class="bi bi-${icon} me-2"></i>${esc(v)}</p>`).join('');
+</script>

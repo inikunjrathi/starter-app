@@ -1,0 +1,9 @@
+<h2 class="mb-3">Events</h2>
+<div id="events"></div>
+<script>
+api('/api/data/registrations').then(regs => cards('#events', EVENTS.map(e => ({
+  title: e.name, icon: e.icon,
+  text: `${new Date(e.date).toDateString()} · ${e.venue}`,
+  footer: `Fee ₹${e.fee} · ${regs.filter(r => r.event === e.name).length} registered`,
+}))));
+</script>

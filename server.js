@@ -69,14 +69,17 @@ MongoClient.connect(MONGO_URL).then(async client => {
   };
   app.post('/api/data/:name', async (req, res) => {
     const c = coll(req, res); if (!c) return;
-    const r = await c.insertOne({ ...req.body, user: userFrom(req), createdAt: new Date() });
+    const { _id, user, createdAt, ...fields } = req.body; // the server sets these, never the client
+    const r = await c.insertOne({ ...fields, user: userFrom(req), createdAt: new Date() });
     res.json({ ok: true, id: r.insertedId });
   });
   app.get('/api/data/:name', async (req, res) => {
     const user = userFrom(req);
     if (!user) return res.status(401).json({ error: 'Login required' });
     const c = coll(req, res); if (!c) return;
-    res.json(await c.find(SHARED.includes(req.params.name) ? {} : { user }).sort({ createdAt: -1 }).limit(100).toArray());
+    const rows = await c.find(SHARED.includes(req.params.name) ? {} : { user }).sort({ createdAt: -1 }).limit(100).toArray();
+    // don't reveal other users' emails; just say whether each record is yours
+    res.json(rows.map(({ user: owner, ...r }) => ({ ...r, mine: owner === user })));
   });
   // Update / delete one of your own records: PUT|DELETE /api/data/notes/<id>
   const own = async (req, res) => {

@@ -1,0 +1,20 @@
+<h2 class="mb-3">Offers</h2>
+<div class="row g-3 mb-4" id="offers"></div>
+<h4 class="mb-3"><i class="bi bi-star-fill text-warning"></i> Popular Dishes</h4>
+<ul class="list-group" id="popular"></ul>
+<script>
+document.getElementById('offers').innerHTML = OFFERS.map(o => `
+  <div class="col-md-4"><div class="card h-100 border-success"><div class="card-body">
+    <span class="badge bg-success fs-6 mb-2">${o.percent}% OFF</span>
+    <p class="mb-2">${esc(o.text)}</p>
+    <span class="badge text-bg-light border font-monospace fs-6">${esc(o.code)}</span>
+  </div></div></div>`).join('');
+api('/api/data/fooditems').then(items => {
+  document.getElementById('popular').innerHTML = items.filter(i => i.popular === 'Yes').map(i => `
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span>${esc(i.foodItemName)} <span class="badge bg-${i.type === 'Veg' ? 'success' : 'danger'}">${esc(i.type)}</span>
+        <span class="badge bg-light text-dark border">${esc(i.category)}</span></span>
+      <span>₹${esc(i.price)}</span>
+    </li>`).join('') || '<li class="list-group-item text-body-secondary">No popular dishes marked yet</li>';
+});
+</script>

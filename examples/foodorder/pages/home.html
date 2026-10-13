@@ -1,0 +1,35 @@
+<div id="banner" class="mb-4"></div>
+<div class="row g-4">
+  <div class="col-lg-4"><div class="card"><div class="card-body">
+    <h4 class="mb-3">Food Item Management</h4>
+    <form id="itemForm"></form>
+  </div></div></div>
+  <div class="col-lg-8">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0">Food Items</h4>
+      <button class="btn btn-sm btn-outline-secondary d-none" id="sample">Add sample items</button>
+    </div>
+    <div id="itemTable"></div>
+  </div>
+</div>
+<script>
+carousel('#banner', ['images/banner1.svg', 'images/banner2.svg', 'images/banner3.svg']);
+const items = crudForm({ collection: 'fooditems', form: '#itemForm', table: '#itemTable', search: true, submitText: 'Save Item' });
+
+// One click to fill an empty menu for a demo
+const SAMPLE = [
+  ['Paneer Tikka', 'Starters', 'Veg', 220, 'Yes'], ['Chicken 65', 'Starters', 'Non-Veg', 260, 'No'],
+  ['Butter Chicken', 'Main Course', 'Non-Veg', 340, 'Yes'], ['Dal Makhani', 'Main Course', 'Veg', 240, 'No'],
+  ['Veg Biryani', 'Main Course', 'Veg', 260, 'Yes'], ['Gulab Jamun', 'Desserts', 'Veg', 90, 'No'],
+  ['Chocolate Brownie', 'Desserts', 'Veg', 150, 'Yes'], ['Mango Lassi', 'Beverages', 'Veg', 110, 'Yes'],
+  ['Cold Coffee', 'Beverages', 'Veg', 130, 'No'],
+];
+const sampleBtn = document.getElementById('sample');
+api('/api/data/fooditems').then(list => sampleBtn.classList.toggle('d-none', list.length > 0));
+sampleBtn.onclick = async () => {
+  sampleBtn.disabled = true;
+  for (const [foodItemName, category, type, price, popular] of SAMPLE)
+    await api('/api/data/fooditems', { foodItemName, category, type, price, availability: 'Available', popular });
+  sampleBtn.classList.add('d-none'); items.reload();
+};
+</script>

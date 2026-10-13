@@ -1,0 +1,56 @@
+<div class="row g-4">
+  <div class="col-lg-8"><h2 class="mb-3">Menu</h2><div id="menu"></div></div>
+  <div class="col-lg-4">
+    <div class="card sticky-top" style="top:1rem"><div class="card-body">
+      <h4>Your Order <span class="badge bg-primary" id="count">0</span></h4>
+      <ul class="list-group list-group-flush mb-2" id="cartList"></ul>
+      <h5>Total: ₹<span id="total">0</span></h5>
+      <input class="form-control mb-2" id="tableNo" placeholder="Table no. or delivery address">
+      <button class="btn btn-success w-100" id="placeOrder">Place Order</button>
+      <div id="msg" class="mt-2"></div>
+    </div></div>
+  </div>
+</div>
+<script>
+let cart = JSON.parse(localStorage.getItem('restaurantCart') || '{}'); // { menuId: qty }
+const $ = id => document.getElementById(id);
+const save = () => { localStorage.setItem('restaurantCart', JSON.stringify(cart)); render(); };
+const items = () => MENU.filter(m => cart[m.id]);
+
+// menu grouped by category
+$('menu').innerHTML = [...new Set(MENU.map(m => m.category))].map(cat => `
+  <h5 class="mt-3">${esc(cat)}</h5>
+  <ul class="list-group">${MENU.filter(m => m.category === cat).map(m => `
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-circle-fill small text-${m.veg ? 'success' : 'danger'} me-2" title="${m.veg ? 'Veg' : 'Non-veg'}"></i>${esc(m.name)}</span>
+      <span>₹${m.price} <button class="btn btn-sm btn-outline-primary ms-2" data-add="${m.id}">Add</button></span>
+    </li>`).join('')}</ul>`).join('');
+document.querySelectorAll('[data-add]').forEach(b => b.onclick = () => { cart[b.dataset.add] = (cart[b.dataset.add] || 0) + 1; save(); });
+
+function render() {
+  $('cartList').innerHTML = items().map(m => `
+    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+      <span>${esc(m.name)}<br><small>₹${m.price} × ${cart[m.id]}</small></span>
+      <span class="btn-group btn-group-sm"><button class="btn btn-outline-secondary" data-qty="${m.id},-1">−</button><button class="btn btn-outline-secondary" data-qty="${m.id},1">+</button></span>
+    </li>`).join('') || '<li class="list-group-item px-0 text-body-secondary">Nothing added yet</li>';
+  $('count').textContent = items().reduce((n, m) => n + cart[m.id], 0);
+  $('total').textContent = items().reduce((s, m) => s + m.price * cart[m.id], 0);
+  document.querySelectorAll('[data-qty]').forEach(b => b.onclick = () => {
+    const [id, d] = b.dataset.qty.split(',').map(Number);
+    cart[id] += d; if (cart[id] <= 0) delete cart[id]; save();
+  });
+}
+
+$('placeOrder').onclick = async () => {
+  if (!items().length) return;
+  if (!auth.user()) { go('login'); return; }
+  if (!$('tableNo').value.trim()) { $('msg').innerHTML = '<div class="alert alert-warning py-2">Enter a table number or address</div>'; return; }
+  await api('/api/data/orders', {
+    items: items().map(m => ({ name: m.name, price: m.price, qty: cart[m.id] })),
+    total: +$('total').textContent, deliverTo: $('tableNo').value, status: 'Preparing',
+  });
+  cart = {}; save(); $('tableNo').value = '';
+  $('msg').innerHTML = '<div class="alert alert-success py-2">Order placed! See <a href="#orders">My Orders</a>.</div>';
+};
+render();
+</script>

@@ -1,0 +1,10 @@
+<div class="row g-4">
+  <div class="col-lg-4"><div class="card"><div class="card-body">
+    <h4 class="mb-3">Add Employee</h4>
+    <form id="empForm"></form>
+  </div></div></div>
+  <div class="col-lg-8"><h4 class="mb-3">Employees</h4><div id="empTable"></div></div>
+</div>
+<script>
+crudForm({ collection: 'employees', form: '#empForm', table: '#empTable', search: true, submitText: 'Add Employee' });
+</script>
