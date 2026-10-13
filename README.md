@@ -102,9 +102,11 @@ public/...          one .html file per navbar item
 email, checks the password with `bcrypt.compare`, and if it's correct goes to `home.html`.
 
 **Bootstrap** is served from `node_modules` by this line in `index.js`, so the pages need no internet:
+
 ```js
 app.use("/bootstrap", express.static(path.join(require.resolve("bootstrap"), "../..")));
 ```
+
 Pages load it with `<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">` and
 `<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>`.
 
@@ -129,39 +131,39 @@ Copy the example closest to the question, for example `cp -r examples/hospital e
 
 Copy these blocks from the example files:
 
-| Feature | Copy from |
-|---------|-----------|
-| Horizontal navbar | top of any page, e.g. `examples/bookstore/public/home.html` |
-| Navbar with a **dropdown** | `examples/foodorder/public/home.html` (Menu → Starters, Main Course...) |
-| **Vertical navbar** (sidebar) | `examples/employees/public/*.html`, `template/public/sidebar.html` |
-| Image **carousel** / slider | `<div id="slider" ...>` in any `home.html` |
-| **Badges** | `examples/foodorder/public/menu.html` (Veg, Non-Veg, Popular), `offers.html` |
-| Cards | `examples/hospital/public/doctors.html`, `examples/hotel/public/rooms.html` |
-| Login / Sign up | `public/login.html`, `public/signup.html` + `/login`, `/signup` in `index.js` |
-| Form saved to MongoDB | `home.html` + `app.post("/add")` + `models/` |
-| Table of saved records | `books.html` + `app.get("/api/books")` |
-| Filter by category (`?category=...`) | `examples/bookstore/public/books.html`, `categories.html` |
-| A second form and model | `examples/foodorder`: `/order` route, `models/Order.js`, `orders.html` |
-| Server-side check (dates) | `examples/hotel/index.js`, `examples/library/index.js` |
-| Count records per group | `examples/employees/public/departments.html` |
-| **Image gallery** with popup | `template/public/gallery.html` |
-| **Add to cart** | `template/public/shop.html` |
-| **Calculator** | `template/public/calculator.html` |
+| Feature                                | Copy from                                                                               |
+| -------------------------------------- | --------------------------------------------------------------------------------------- |
+| Horizontal navbar                      | top of any page, e.g. `examples/bookstore/public/home.html`                            |
+| Navbar with a **dropdown**        | `examples/foodorder/public/home.html` (Menu → Starters, Main Course...)              |
+| **Vertical navbar** (sidebar)    | `examples/employees/public/*.html`, `template/public/sidebar.html`                  |
+| Image **carousel** / slider       | `<div id="slider" ...>` in any `home.html`                                          |
+| **Badges**                       | `examples/foodorder/public/menu.html` (Veg, Non-Veg, Popular), `offers.html`        |
+| Cards                                  | `examples/hospital/public/doctors.html`, `examples/hotel/public/rooms.html`         |
+| Login / Sign up                        | `public/login.html`, `public/signup.html` + `/login`, `/signup` in `index.js` |
+| Form saved to MongoDB                  | `home.html` + `app.post("/add")` + `models/`                                      |
+| Table of saved records                 | `books.html` + `app.get("/api/books")`                                              |
+| Filter by category (`?category=...`) | `examples/bookstore/public/books.html`, `categories.html`                           |
+| A second form and model                | `examples/foodorder`: `/order` route, `models/Order.js`, `orders.html`          |
+| Server-side check (dates)              | `examples/hotel/index.js`, `examples/library/index.js`                              |
+| Count records per group                | `examples/employees/public/departments.html`                                          |
+| **Image gallery** with popup     | `template/public/gallery.html`                                                        |
+| **Add to cart**                  | `template/public/shop.html`                                                           |
+| **Calculator**                   | `template/public/calculator.html`                                                     |
 
 ## Examples
 
-| Folder | Database | Navbar | Form fields → collection |
-|--------|----------|--------|--------------------------|
-| `template` | `mywebsite` | Home, Gallery, Shop, Calculator, Sidebar, Contact, Messages | name, email, message → `messages` |
-| `examples/pizza` | `pizzajob` | none (exactly the PDF) | name, category, size, cost → `login` |
-| `examples/bookstore` (Set A) | `bookstore` | Home, Books, Categories, Contact Us | name, author, category, price → `books` |
-| `examples/foodorder` (Set F) | `foodorder` | Home, Menu ▾ (categories), My Orders, Offers, Contact Us | name, category, type, price, availability, popular → `foods`; orders → `orders` |
-| `examples/hospital` | `hospital` | Home, Patients, Doctors, Contact Us | name, age, gender, blood group, disease, doctor, admission date, phone → `patients` |
-| `examples/library` | `library` | Home, Issued Books, Book Catalog, Contact Us | student, roll no, book, issue/return date, status → `issues` |
-| `examples/college` | `college` | Home, Courses, Admission, Students, Contact Us | name, email, phone, DOB, gender, course, %, address → `students` |
-| `examples/employees` | `company` | sidebar: Home, Employees, Departments, Contact Us | name, email, department, designation, salary, joining date → `employees` |
-| `examples/events` | `techfest` | Home, Events, Register, Participants, Contact Us | name, email, phone, college, year, event → `registrations` |
-| `examples/hotel` | `hotel` | Home, Rooms, Book a Room, Bookings, Contact Us | guest, email, phone, room type, check-in/out, guests → `bookings` |
+| Folder                         | Database      | Navbar                                                      | Form fields → collection                                                             |
+| ------------------------------ | ------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `template`                   | `mywebsite` | Home, Gallery, Shop, Calculator, Sidebar, Contact, Messages | name, email, message → `messages`                                                   |
+| `examples/pizza`             | `pizzajob`  | none (exactly the PDF)                                      | name, category, size, cost → `login`                                                |
+| `examples/bookstore` (Set A) | `bookstore` | Home, Books, Categories, Contact Us                         | name, author, category, price → `books`                                             |
+| `examples/foodorder` (Set F) | `foodorder` | Home, Menu ▾ (categories), My Orders, Offers, Contact Us   | name, category, type, price, availability, popular → `foods`; orders → `orders`  |
+| `examples/hospital`          | `hospital`  | Home, Patients, Doctors, Contact Us                         | name, age, gender, blood group, disease, doctor, admission date, phone → `patients` |
+| `examples/library`           | `library`   | Home, Issued Books, Book Catalog, Contact Us                | student, roll no, book, issue/return date, status → `issues`                        |
+| `examples/college`           | `college`   | Home, Courses, Admission, Students, Contact Us              | name, email, phone, DOB, gender, course, %, address → `students`                    |
+| `examples/employees`         | `company`   | sidebar: Home, Employees, Departments, Contact Us           | name, email, department, designation, salary, joining date → `employees`            |
+| `examples/events`            | `techfest`  | Home, Events, Register, Participants, Contact Us            | name, email, phone, college, year, event → `registrations`                          |
+| `examples/hotel`             | `hotel`     | Home, Rooms, Book a Room, Bookings, Contact Us              | guest, email, phone, room type, check-in/out, guests → `bookings`                   |
 
 Mongoose names the collection after the model: model `Book` → collection `books`. To choose the name
 yourself, add it as a third argument like the Pizza example: `mongoose.model("Pizza", pizzaSchema, "login")`.

@@ -7,33 +7,38 @@ const Book = require("./models/Book");
 
 const app = express();
 
-app.use(express.urlencoded({ extended: false }));      // read form data
-app.use(express.static(path.join(__dirname, "public"))); // serve the html pages
-// Bootstrap from node_modules, so the site works without internet
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "public")));
+// Bootstrap from node_modules, so the pages work without internet
 app.use("/bootstrap", express.static(path.join(require.resolve("bootstrap"), "../..")));
 
 mongoose.connect("mongodb://127.0.0.1:27017/bookstore")
   .then(() => console.log("MongoDB connected"));
 
-// first page = login
 app.get("/", (req, res) =>
   res.sendFile(path.join(__dirname, "public", "login.html"))
 );
 
 app.post("/signup", async (req, res) => {
+
   const { name, email, password } = req.body;
 
   if (await User.findOne({ email }))
     return res.send("Email already registered. <a href='/signup.html'>Try again</a>");
 
-  const hashed = await bcrypt.hash(password, 10);   // never store plain passwords
-  await new User({ name, email, password: hashed }).save();
+  await new User({
+    name,
+    email,
+    password: await bcrypt.hash(password, 10)
+  }).save();
 
   res.send("Sign up successful! <a href='/'>Login now</a>");
 });
 
 app.post("/login", async (req, res) => {
+
   const { email, password } = req.body;
+
   const user = await User.findOne({ email });
 
   if (user && await bcrypt.compare(password, user.password))
@@ -43,6 +48,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/add", async (req, res) => {
+
   const { name, author, category, price } = req.body;
 
   await new Book({
@@ -55,7 +61,6 @@ app.post("/add", async (req, res) => {
   res.send("Book details saved successfully! <a href='/home.html'>Add another</a> | <a href='/books.html'>View all</a>");
 });
 
-// all records as JSON, used by books.html
 app.get("/api/books", async (req, res) => {
   res.json(await Book.find());
 });
