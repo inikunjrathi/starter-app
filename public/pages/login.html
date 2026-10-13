@@ -1,0 +1,21 @@
+<div class="card mx-auto" style="max-width:400px">
+  <div class="card-body">
+    <h3 class="mb-3">Login</h3>
+    <form id="loginForm">
+      <input class="form-control mb-2" name="email" type="email" placeholder="Email" required>
+      <input class="form-control mb-3" name="password" type="password" placeholder="Password" required>
+      <button class="btn btn-primary w-100">Login</button>
+      <div id="msg" class="mt-2 text-danger"></div>
+    </form>
+    <p class="mt-3 mb-0 small">No account? <a href="#signup">Sign up</a></p>
+  </div>
+</div>
+<script>
+document.getElementById('loginForm').onsubmit = async e => {
+  e.preventDefault();
+  try {
+    auth.login(await api('/api/login', Object.fromEntries(new FormData(e.target))));
+    location.hash = '#home';
+  } catch (err) { document.getElementById('msg').textContent = err.message; }
+};
+</script>

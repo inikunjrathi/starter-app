@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="col-lg-8">
+    <h2 class="mb-3">Shop</h2>
+    <div class="row g-3" id="products"></div>
+  </div>
+  <div class="col-lg-4">
+    <h2 class="mb-3">Cart <span class="badge bg-primary" id="count">0</span></h2>
+    <ul class="list-group mb-2" id="cartList"></ul>
+    <h4>Total: ₹<span id="total">0</span></h4>
+    <button class="btn btn-success w-100" id="checkout">Checkout</button>
+    <div id="msg" class="mt-2"></div>
+  </div>
+</div>
+<script>
+// Edit your products here
+const products = [
+  { id: 1, name: 'Headphones', price: 1999, img: 'images/headphones.svg' },
+  { id: 2, name: 'Camera',     price: 24999, img: 'images/camera.svg' },
+  { id: 3, name: 'Watch',      price: 3499, img: 'images/watch.svg' },
+  { id: 4, name: 'Shoes',      price: 2599, img: 'images/shoes.svg' },
+];
+let cart = JSON.parse(localStorage.getItem('cart') || '{}'); // { productId: qty }
+
+function save() { localStorage.setItem('cart', JSON.stringify(cart)); render(); }
+window.addToCart = id => { cart[id] = (cart[id] || 0) + 1; save(); };
+window.changeQty = (id, d) => { cart[id] += d; if (cart[id] <= 0) delete cart[id]; save(); };
+
+function render() {
+  const items = products.filter(p => cart[p.id]);
+  document.getElementById('cartList').innerHTML = items.map(p => `
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span>${p.name}<br><small>₹${p.price} × ${cart[p.id]}</small></span>
+      <span class="btn-group btn-group-sm">
+        <button class="btn btn-outline-secondary" onclick="changeQty(${p.id},-1)">−</button>
+        <button class="btn btn-outline-secondary" onclick="changeQty(${p.id},1)">+</button>
+      </span>
+    </li>`).join('') || '<li class="list-group-item">Cart is empty</li>';
+  document.getElementById('count').textContent = items.reduce((n, p) => n + cart[p.id], 0);
+  document.getElementById('total').textContent = items.reduce((s, p) => s + p.price * cart[p.id], 0);
+}
+
+document.getElementById('products').innerHTML = products.map(p => `
+  <div class="col-sm-6 col-md-4"><div class="card h-100">
+    <img src="${p.img}" class="card-img-top" alt="">
+    <div class="card-body"><h5>${p.name}</h5><p>₹${p.price}</p>
+      <button class="btn btn-primary btn-sm" onclick="addToCart(${p.id})"><i class="bi bi-cart-plus"></i> Add to cart</button></div>
+  </div></div>`).join('');
+
+document.getElementById('checkout').onclick = async () => {
+  const msg = document.getElementById('msg');
+  if (!Object.keys(cart).length) return;
+  if (!auth.user()) { location.hash = '#login'; return; }
+  const items = products.filter(p => cart[p.id]).map(p => ({ name: p.name, price: p.price, qty: cart[p.id] }));
+  await api('/api/data/orders', { items, total: +document.getElementById('total').textContent });
+  cart = {}; save();
+  msg.innerHTML = '<div class="alert alert-success">Order placed!</div>';
+};
+render();
+</script>

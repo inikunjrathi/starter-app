@@ -1,0 +1,25 @@
+<h2 class="mb-3">My Profile</h2>
+<div class="row g-4">
+  <div class="col-md-4"><div class="card text-center"><div class="card-body">
+    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fs-1 mb-3" style="width:100px;height:100px" id="avatar"></div>
+    <h4 id="pName"></h4><p class="text-body-secondary" id="pEmail"></p>
+    <button class="btn btn-outline-danger" onclick="auth.logout()">Logout</button>
+  </div></div></div>
+  <div class="col-md-8">
+    <h4>My Orders</h4>
+    <div id="orders">Loading...</div>
+  </div>
+</div>
+<script>
+const u = auth.user();
+document.getElementById('avatar').textContent = u.name[0].toUpperCase();
+document.getElementById('pName').textContent = u.name;
+document.getElementById('pEmail').textContent = u.email;
+api('/api/data/orders').then(orders => {
+  document.getElementById('orders').innerHTML = orders.length ? orders.map(o => `
+    <div class="card mb-2"><div class="card-body">
+      <div class="d-flex justify-content-between"><b>${new Date(o.createdAt).toLocaleString()}</b><b>₹${o.total}</b></div>
+      <small class="text-body-secondary">${o.items.map(i => `${i.name} × ${i.qty}`).join(', ')}</small>
+    </div></div>`).join('') : '<p class="text-body-secondary">No orders yet. <a href="#cart">Go shopping</a></p>';
+}).catch(e => document.getElementById('orders').textContent = e.message);
+</script>

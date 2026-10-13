@@ -1,0 +1,13 @@
+<h2 class="mb-3">My Messages <small class="text-body-secondary fs-6">(ones you sent from the Form page while logged in)</small></h2>
+<table class="table table-striped">
+  <thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Message</th><th>Date</th></tr></thead>
+  <tbody id="rows"><tr><td colspan="5">Loading...</td></tr></tbody>
+</table>
+<script>
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => `&#${c.charCodeAt(0)};`);
+api('/api/data/contacts').then(list => {
+  document.getElementById('rows').innerHTML = list.length ? list.map(m =>
+    `<tr><td>${esc(m.name)}</td><td>${esc(m.email)}</td><td>${esc(m.subject)}</td><td>${esc(m.message)}</td><td>${new Date(m.createdAt).toLocaleString()}</td></tr>`
+  ).join('') : '<tr><td colspan="5">No messages yet</td></tr>';
+});
+</script>

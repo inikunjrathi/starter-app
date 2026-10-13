@@ -1,0 +1,45 @@
+<h2 class="mb-3">My Notes <small class="text-body-secondary fs-6">(saved in MongoDB, login required)</small></h2>
+<form id="noteForm" class="card mb-3" style="max-width:600px"><div class="card-body">
+  <input class="form-control mb-2" name="title" placeholder="Title" required>
+  <textarea class="form-control mb-2" name="body" rows="3" placeholder="Write something..."></textarea>
+  <button class="btn btn-primary" id="saveBtn">Add note</button>
+  <button type="button" class="btn btn-link d-none" id="cancelBtn">Cancel edit</button>
+</div></form>
+<div class="row g-3" id="notes"></div>
+<script>
+// Full CRUD example: Create (POST), Read (GET), Update (PUT), Delete (DELETE)
+const NOTES = '/api/data/notes';
+const form = document.getElementById('noteForm');
+let notes = [], editing = null;
+
+async function load() {
+  notes = await api(NOTES);
+  const box = document.getElementById('notes');
+  box.innerHTML = notes.length ? '' : '<p class="text-body-secondary">No notes yet.</p>';
+  notes.forEach(n => {
+    const col = document.createElement('div');
+    col.className = 'col-md-4';
+    col.innerHTML = `<div class="card h-100"><div class="card-body"><h5></h5><p style="white-space:pre-wrap"></p></div>
+      <div class="card-footer d-flex gap-2"><button class="btn btn-sm btn-outline-primary">Edit</button>
+      <button class="btn btn-sm btn-outline-danger">Delete</button></div></div>`;
+    col.querySelector('h5').textContent = n.title;   // textContent = safe from HTML injection
+    col.querySelector('p').textContent = n.body;
+    const [edit, del] = col.querySelectorAll('button');
+    edit.onclick = () => { editing = n._id; form.elements.title.value = n.title; form.elements.body.value = n.body; setMode(); };
+    del.onclick = async () => { await api(`${NOTES}/${n._id}`, null, 'DELETE'); load(); };
+    box.appendChild(col);
+  });
+}
+function setMode() {
+  document.getElementById('saveBtn').textContent = editing ? 'Update note' : 'Add note';
+  document.getElementById('cancelBtn').classList.toggle('d-none', !editing);
+}
+form.onsubmit = async e => {
+  e.preventDefault();
+  const data = { title: form.elements.title.value, body: form.elements.body.value };
+  if (editing) await api(`${NOTES}/${editing}`, data, 'PUT'); else await api(NOTES, data);
+  editing = null; form.reset(); setMode(); load();
+};
+document.getElementById('cancelBtn').onclick = () => { editing = null; form.reset(); setMode(); };
+load();
+</script>

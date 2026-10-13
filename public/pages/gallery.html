@@ -1,0 +1,16 @@
+<h2 class="mb-3">Image Gallery</h2>
+<div class="row g-3 gallery" id="gallery"></div>
+
+<div class="modal fade" id="imgModal"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+  <img id="bigImg" class="w-100">
+</div></div></div>
+<script>
+// Put your photos in public/images/ and list them here, e.g. 'images/beach.jpg'
+const images = [1, 2, 3, 4, 5, 6, 7, 8].map(i => `images/gallery${i}.svg`);
+const modal = new bootstrap.Modal('#imgModal');
+document.getElementById('gallery').innerHTML = images.map(src =>
+  `<div class="col-6 col-md-3"><img src="${src}" loading="lazy" alt=""></div>`).join('');
+document.querySelectorAll('#gallery img').forEach(img => img.onclick = () => {
+  document.getElementById('bigImg').src = img.src; modal.show();
+});
+</script>

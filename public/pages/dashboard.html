@@ -1,0 +1,30 @@
+<h2 class="mb-3">Dashboard</h2>
+<div class="row g-3 mb-4" id="stats"></div>
+<div class="row g-4">
+  <div class="col-lg-8"><div class="card"><div class="card-body">
+    <h5>Monthly Sales</h5>
+    <div class="d-flex align-items-end gap-2" style="height:220px" id="chart"></div>
+  </div></div></div>
+  <div class="col-lg-4"><div class="card"><div class="card-body">
+    <h5>Goals</h5><div id="goals"></div>
+  </div></div></div>
+</div>
+<script>
+// Edit the numbers here (or load them with api())
+const stats = [['Users', 1250, 'people', 'primary'], ['Orders', 342, 'bag', 'success'], ['Revenue', '₹84k', 'currency-rupee', 'warning'], ['Visits', '12.4k', 'eye', 'info']];
+const sales = { Jan: 30, Feb: 45, Mar: 28, Apr: 60, May: 75, Jun: 52, Jul: 80, Aug: 66 };
+const goals = { 'Sales target': 72, 'New users': 45, 'Support tickets closed': 90 };
+
+document.getElementById('stats').innerHTML = stats.map(([name, value, icon, color]) => `
+  <div class="col-6 col-lg-3"><div class="card border-start border-4 border-${color}"><div class="card-body d-flex justify-content-between align-items-center">
+    <div><small class="text-body-secondary">${name}</small><h3 class="mb-0">${value}</h3></div><i class="bi bi-${icon} fs-1 text-${color}"></i>
+  </div></div></div>`).join('');
+const max = Math.max(...Object.values(sales));
+document.getElementById('chart').innerHTML = Object.entries(sales).map(([m, v]) => `
+  <div class="flex-fill text-center d-flex flex-column justify-content-end h-100">
+    <small>${v}</small><div class="bg-primary rounded-top" style="height:${v / max * 85}%" title="${m}: ${v}"></div><small>${m}</small>
+  </div>`).join('');
+document.getElementById('goals').innerHTML = Object.entries(goals).map(([g, p]) => `
+  <div class="mb-3"><div class="d-flex justify-content-between small"><span>${g}</span><span>${p}%</span></div>
+  <div class="progress"><div class="progress-bar" style="width:${p}%"></div></div></div>`).join('');
+</script>

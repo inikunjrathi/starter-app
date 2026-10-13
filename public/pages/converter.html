@@ -1,0 +1,37 @@
+<h2 class="mb-3">Unit Converter</h2>
+<div class="card" style="max-width:550px"><div class="card-body">
+  <select class="form-select mb-3" id="kind"></select>
+  <div class="row g-2 align-items-center">
+    <div class="col-5"><input type="number" class="form-control mb-1" id="a" value="1"><select class="form-select" id="ua"></select></div>
+    <div class="col-2 text-center fs-3">=</div>
+    <div class="col-5"><input type="number" class="form-control mb-1" id="b"><select class="form-select" id="ub"></select></div>
+  </div>
+</div></div>
+<script>
+// Each unit = how many base units it is. Add your own kinds/units here.
+const units = {
+  Length: { Meter: 1, Kilometer: 1000, Centimeter: 0.01, Mile: 1609.344, Foot: 0.3048, Inch: 0.0254 },
+  Weight: { Kilogram: 1, Gram: 0.001, Pound: 0.45359237, Ounce: 0.028349523 },
+  Data:   { Byte: 1, KB: 1024, MB: 1024 ** 2, GB: 1024 ** 3 },
+  Temperature: { Celsius: 0, Fahrenheit: 0, Kelvin: 0 }, // special-cased below
+};
+const toC = { Celsius: v => v, Fahrenheit: v => (v - 32) * 5 / 9, Kelvin: v => v - 273.15 };
+const fromC = { Celsius: v => v, Fahrenheit: v => v * 9 / 5 + 32, Kelvin: v => v + 273.15 };
+const $ = id => document.getElementById(id);
+
+$('kind').innerHTML = Object.keys(units).map(k => `<option>${k}</option>`).join('');
+function fill() {
+  const names = Object.keys(units[$('kind').value]);
+  $('ua').innerHTML = $('ub').innerHTML = names.map(n => `<option>${n}</option>`).join('');
+  $('ub').selectedIndex = 1; convert();
+}
+const conv = (v, from, to) => {
+  const k = $('kind').value;
+  return +(k === 'Temperature' ? fromC[to](toC[from](v)) : v * units[k][from] / units[k][to]).toPrecision(10);
+};
+const convert = () => $('b').value = conv(+$('a').value, $('ua').value, $('ub').value);
+$('kind').onchange = fill;
+['a', 'ua', 'ub'].forEach(id => $(id).oninput = convert);
+$('b').oninput = () => $('a').value = conv(+$('b').value, $('ub').value, $('ua').value); // typing on the right side
+fill();
+</script>
