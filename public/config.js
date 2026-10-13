@@ -26,4 +26,10 @@ const CONFIG = {
   authPages: ['login', 'signup'],
   // Pages only visible after login (must also be listed above)
   protected: ['profile', 'notes', 'messages'],
+  requireLogin: false, // true = every page needs login (site opens on the login page)
+  labels: {},          // custom menu text, e.g. { contact: 'Contact Us' }
+
+  // ----- Database (read by server.js; restart the server after changing) -----
+  database: 'starterapp', // MongoDB database name (what you see in Compass)
+  shared: [],             // collections all logged-in users can see, e.g. ['books']
 };

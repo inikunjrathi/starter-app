@@ -1,0 +1,44 @@
+<!-- Image carousel: book covers / promotional banners -->
+<div id="banner" class="carousel slide mb-4" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    <button data-bs-target="#banner" data-bs-slide-to="0" class="active"></button>
+    <button data-bs-target="#banner" data-bs-slide-to="1"></button>
+    <button data-bs-target="#banner" data-bs-slide-to="2"></button>
+  </div>
+  <div class="carousel-inner rounded">
+    <div class="carousel-item active"><img src="images/banner1.svg" class="d-block w-100" alt="New arrivals"></div>
+    <div class="carousel-item"><img src="images/banner2.svg" class="d-block w-100" alt="Bestsellers"></div>
+    <div class="carousel-item"><img src="images/banner3.svg" class="d-block w-100" alt="Sale"></div>
+  </div>
+  <button class="carousel-control-prev" data-bs-target="#banner" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+  <button class="carousel-control-next" data-bs-target="#banner" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+</div>
+
+<!-- Book details form -->
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card"><div class="card-body">
+      <h4 class="mb-3">Add Book Details</h4>
+      <form id="bookForm"></form>
+    </div></div>
+  </div>
+  <div class="col-lg-7">
+    <h4 class="mb-3">Recently Added</h4>
+    <div id="bookTable"></div>
+  </div>
+</div>
+<script>
+bootstrap.Carousel.getOrCreateInstance('#banner').cycle();
+crudForm({
+  collection: 'books',              // MongoDB collection name
+  fields: [
+    'Book Name',
+    'Author Name',
+    { label: 'Category', options: CONFIG.categories },
+    { label: 'Price', type: 'number' },
+  ],
+  form: '#bookForm',
+  table: '#bookTable',
+  submitText: 'Add Book',
+});
+</script>

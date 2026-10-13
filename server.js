@@ -1,11 +1,19 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const fs = require('fs');
+const vm = require('vm');
 const { MongoClient, ObjectId } = require('mongodb');
 
 const PORT = process.env.PORT || 3000;
 const MONGO_URL = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017';
-const DB_NAME = process.env.DB_NAME || 'starterapp';
+// SITE=examples/bookstore npm start -> files in that folder override the ones in public/
+const SITE = process.env.SITE ? require('path').resolve(process.env.SITE) : null;
+const configFile = SITE && fs.existsSync(SITE + '/config.js') ? SITE + '/config.js' : __dirname + '/public/config.js';
+// Read settings from the same config.js the website uses
+const CONFIG = vm.runInNewContext(fs.readFileSync(configFile, 'utf8') + ';CONFIG');
+const DB_NAME = process.env.DB_NAME || CONFIG.database || 'starterapp';
+const SHARED = CONFIG.shared || []; // collections every logged-in user can read in full
 
 // Login token = email + HMAC signature. Set SECRET in production so tokens survive restarts.
 const SECRET = process.env.SECRET || crypto.randomBytes(32).toString('hex');
@@ -19,6 +27,7 @@ const userFrom = req => { // ponytail: tokens never expire, add an expiry timest
 
 const app = express();
 app.use(express.json());
+if (SITE) app.use(express.static(SITE));
 app.use(express.static(__dirname + '/public'));
 // Bootstrap is served from node_modules so the site works without internet
 app.use('/vendor/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
@@ -51,7 +60,8 @@ MongoClient.connect(MONGO_URL).then(async client => {
   });
 
   // Generic save/list for any page: POST /api/data/contacts {..} , GET /api/data/contacts
-  // Records are tagged with the logged-in user; GET returns only your own records.
+  // Records are tagged with the logged-in user. GET returns only your own records,
+  // or all records for collections listed in CONFIG.shared. Edit/delete is always own-only.
   const coll = (req, res) => {
     const name = req.params.name;
     if (!/^\w+$/.test(name) || name === 'users') { res.status(400).json({ error: 'Bad collection' }); return null; }
@@ -66,7 +76,7 @@ MongoClient.connect(MONGO_URL).then(async client => {
     const user = userFrom(req);
     if (!user) return res.status(401).json({ error: 'Login required' });
     const c = coll(req, res); if (!c) return;
-    res.json(await c.find({ user }).sort({ createdAt: -1 }).limit(100).toArray());
+    res.json(await c.find(SHARED.includes(req.params.name) ? {} : { user }).sort({ createdAt: -1 }).limit(100).toArray());
   });
   // Update / delete one of your own records: PUT|DELETE /api/data/notes/<id>
   const own = async (req, res) => {
@@ -88,5 +98,5 @@ MongoClient.connect(MONGO_URL).then(async client => {
     res.status(r.deletedCount ? 200 : 404).json({ ok: !!r.deletedCount });
   });
 
-  app.listen(PORT, () => console.log(`Running on http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log(`Running on http://localhost:${PORT} (database: ${DB_NAME}${SITE ? ', site: ' + process.env.SITE : ''})`));
 }).catch(e => { console.error('MongoDB connection failed:', e.message); process.exit(1); });

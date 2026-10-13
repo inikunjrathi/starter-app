@@ -99,7 +99,8 @@ the `mongo-data` volume. Open a shell with `docker exec -it mongo mongosh`.
 
 ## What the app stores
 
-Everything goes in the database `starterapp`, one collection per kind of data:
+Everything goes in one database, `starterapp` by default (change it with `database` in `config.js`;
+the bookstore example uses `bookstore`), with one collection per kind of data:
 
 | Collection | Created by | Example document |
 |------------|-----------|------------------|

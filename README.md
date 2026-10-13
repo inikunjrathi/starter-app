@@ -37,7 +37,8 @@ Set these as environment variables before `npm start`:
 |-------------|-----------------------------|---------|
 | `PORT`      | `3000`                      | Port the website runs on |
 | `MONGO_URL` | `mongodb://127.0.0.1:27017` | MongoDB address (use your Atlas URL here if you use MongoDB Atlas) |
-| `DB_NAME`   | `starterapp`                | Database name |
+| `DB_NAME`   | `database` in config.js     | Database name (overrides config.js) |
+| `SITE`      | none                        | Folder whose files override `public/`, e.g. `examples/bookstore` |
 | `SECRET`    | random on each start        | Key used to sign login tokens. Set it, or everyone gets logged out when the server restarts |
 
 Example:
@@ -47,6 +48,59 @@ SECRET=some-long-random-text PORT=8080 npm start
 ```
 
 On Windows (PowerShell): `$env:SECRET="some-long-random-text"; npm start`
+
+## Exam-style questions (quick recipe)
+
+Most questions look like: *"Website with login, a navbar with pages X, Y, Z, an image carousel,
+and a form with fields A, B, C stored in MongoDB."* A complete answer for one such question is in
+[`examples/bookstore/`](examples/bookstore) (Set A: Online Bookstore). Run it with:
+
+```bash
+SITE=examples/bookstore npm start       # Windows PowerShell: $env:SITE="examples/bookstore"; npm start
+```
+
+Then open MongoDB Compass → connect to `mongodb://127.0.0.1:27017` → database **bookstore** →
+collection **books** to show the stored records.
+
+To answer a new question (say *Set B: Hospital with patients*), either edit `public/` directly, or:
+
+1. Copy the example: `cp -r examples/bookstore examples/hospital`
+2. In `examples/hospital/config.js` set `title`, `pages` (one name per navbar item), `labels`
+   for menu text with spaces (`{ contact: 'Contact Us' }`), `database: 'hospital'`, `shared: ['patients']`.
+3. Make one file per navbar item in `examples/hospital/pages/`, and delete the bookstore ones you don't need.
+   Files you don't provide (like `login.html`) come from `public/pages/`.
+4. For the form, only list the fields; `crudForm` builds the form, saves to MongoDB and shows the table:
+
+```html
+<form id="patientForm"></form>
+<div id="patientTable"></div>
+<script>
+crudForm({
+  collection: 'patients',                 // MongoDB collection
+  fields: [
+    'Patient Name',                       // text box, saved as patientName
+    { label: 'Age', type: 'number' },
+    { label: 'Gender', options: ['Male', 'Female', 'Other'] },   // dropdown
+    { label: 'Admission Date', type: 'date' },
+    { label: 'Email', type: 'email' },
+    { label: 'Address', type: 'textarea', required: false },
+  ],
+  form: '#patientForm',                   // leave out to show only the table
+  table: '#patientTable',                 // leave out to show only the form
+  submitText: 'Add Patient',
+});
+</script>
+```
+
+5. Run `SITE=examples/hospital npm start`.
+
+Field types: `text` (default), `number`, `email`, `date`, `tel`, `password`, `textarea`, or a dropdown via `options`.
+All fields are required unless you add `required: false`. The saved field name is the label in
+camelCase (`'Book Name'` → `bookName`); set `name: '...'` to choose your own. The table shows Edit and
+Delete buttons on records you created.
+
+For a carousel, copy the `<div id="banner" ...>` block from `examples/bookstore/pages/home.html` and
+put your images in `images/`.
 
 ## Customize it
 
@@ -67,15 +121,23 @@ const CONFIG = {
   ],
   authPages: ['login', 'signup'],             // shown at the right of the topbar
   protected: ['profile', 'notes'],            // only visible after login
+  requireLogin: false,                        // true = every page needs login
+  labels: { contact: 'Contact Us' },          // custom menu text
+
+  database: 'starterapp',                     // MongoDB database name (restart server after changing)
+  shared: ['books'],                          // collections every logged-in user can read in full
 };
 ```
 
 - **Remove a feature:** delete its name.
 - **Reorder the menu:** reorder the names.
 - **Group pages:** put them in `{ 'Group name': [...] }`. Groups become dropdowns in the topbar and headings in the sidebar.
-- **Require login:** also add the name to `protected`.
+- **Require login:** also add the name to `protected`, or set `requireLogin: true` to lock every page.
+- **Menu text:** names come from file names (`my-page` becomes "My page"); override with `labels`.
 
-The first page in the list is the home page. Menu labels come from file names (`my-page` becomes "My page").
+The first page in the list is the home page.
+
+Custom keys work too: put your own data in `CONFIG` (e.g. `categories: [...]`) and use it in any page as `CONFIG.categories`.
 
 ### 2. Available pages
 
@@ -161,17 +223,21 @@ await api(`/api/data/things/${id}`, { title: 'New' }, 'PUT');   // update yours
 await api(`/api/data/things/${id}`, null, 'DELETE');            // delete yours
 ```
 
-Records are tagged with the logged-in user, and each user can only read, edit and delete their own.
+Records are tagged with the logged-in user. Each user can only read, edit and delete their own,
+except collections listed in `shared` in `config.js`, which every logged-in user can read (still only
+the owner can edit or delete).
 `api()` throws an `Error` with the server's message if a request fails.
 
 Login helpers: `auth.user()` returns `{ name, email, token }` or `null`, and `auth.logout()` logs out.
-See `notes.html` for a complete create/read/update/delete example.
+See `notes.html` for a complete hand-written create/read/update/delete example, or use `crudForm` (see the exam recipe above).
 
 ## Project structure
 
 ```
 starter-app/
 ├── server.js          Express server: login/signup + /api/data routes
+├── examples/
+│   └── bookstore/     Set A answer: config.js, pages/, images/ (run with SITE=examples/bookstore)
 ├── package.json
 └── public/
     ├── config.js      MAIN FILE: choose pages, layout, theme
@@ -189,7 +255,7 @@ starter-app/
 | POST | `/api/signup` | `{ name, email, password }` | Password at least 6 characters. Returns `{ name, email, token }` |
 | POST | `/api/login` | `{ email, password }` | Returns `{ name, email, token }` |
 | POST | `/api/data/:collection` | any JSON | Anyone can save; tagged with the user if logged in |
-| GET | `/api/data/:collection` | – | Login required; your latest 100 records |
+| GET | `/api/data/:collection` | – | Login required; your latest 100 records (everyone's, for `shared` collections) |
 | PUT | `/api/data/:collection/:id` | fields to change | Login required; your records only |
 | DELETE | `/api/data/:collection/:id` | – | Login required; your records only |
 

@@ -1,0 +1,15 @@
+<h2 class="mb-3">All Books</h2>
+<input class="form-control mb-3" id="search" placeholder="Search by name, author or category..." style="max-width:400px">
+<div id="books"></div>
+<script>
+crudForm({
+  collection: 'books',
+  fields: ['Book Name', 'Author Name', 'Category', { label: 'Price', type: 'number' }],
+  table: '#books',
+});
+// simple search over the rendered rows
+document.getElementById('search').oninput = e => {
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll('#books tbody tr').forEach(tr => tr.hidden = !tr.textContent.toLowerCase().includes(q));
+};
+</script>
